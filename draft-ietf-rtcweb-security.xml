@@ -18,11 +18,11 @@
 <!ENTITY RFC6455 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.6455.xml">
 <!ENTITY RFC6222 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.6222.xml">
 
-<!ENTITY I-D.kaufman-rtcweb-security-ui SYSTEM "http://xml.resource.org/public/rfc/bibxml3/reference.I-D.kaufman-rtcweb-security-ui">
-<!ENTITY I-D.muthu-behave-consent-freshness SYSTEM "http://xml.resource.org/public/rfc/bibxml3/reference.I-D.muthu-behave-consent-freshness">
-<!ENTITY I-D.ietf-rtcweb-security-arch SYSTEM "http://xml.resource.org/public/rfc/bibxml3/reference.I-D.ietf-rtcweb-security-arch">
-<!ENTITY I-D.ietf-rtcweb-overview SYSTEM "http://xml.resource.org/public/rfc/bibxml3/reference.I-D.ietf-rtcweb-overview">
-<!ENTITY I-D.ietf-avtcore-6222bis SYSTEM "http://xml.resource.org/public/rfc/bibxml3/reference.I-D.ietf-avtcore-6222bis">
+<!ENTITY I-D.kaufman-rtcweb-security-ui SYSTEM "http://xml.resource.org/public/rfc/bibxml3/reference.I-D.kaufman-rtcweb-security-ui.xml">
+<!ENTITY I-D.muthu-behave-consent-freshness SYSTEM "http://xml.resource.org/public/rfc/bibxml3/reference.I-D.muthu-behave-consent-freshness.xml">
+<!ENTITY I-D.ietf-rtcweb-security-arch SYSTEM "http://xml.resource.org/public/rfc/bibxml3/reference.I-D.ietf-rtcweb-security-arch.xml">
+<!ENTITY I-D.ietf-rtcweb-overview SYSTEM "http://xml.resource.org/public/rfc/bibxml3/reference.I-D.ietf-rtcweb-overview.xml">
+<!ENTITY I-D.ietf-avtcore-6222bis SYSTEM "http://xml.resource.org/public/rfc/bibxml3/reference.I-D.ietf-avtcore-6222bis.xml">
 
 
 ]>

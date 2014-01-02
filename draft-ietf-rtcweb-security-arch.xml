@@ -21,14 +21,14 @@
 <!ENTITY RFC6455 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.6455.xml">
 <!ENTITY RFC4627 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.4627.xml">
 
-<!ENTITY I-D.ietf-rtcweb-security SYSTEM "http://xml.resource.org/public/rfc/bibxml3/reference.I-D.ietf-rtcweb-security">
-<!ENTITY I-D.ietf-rtcweb-jsep SYSTEM "http://xml.resource.org/public/rfc/bibxml3/reference.I-D.ietf-rtcweb-jsep">
-<!ENTITY I-D.muthu-behave-consent-freshness SYSTEM "http://xml.resource.org/public/rfc/bibxml3/reference.I-D.muthu-behave-consent-freshness">
+<!ENTITY I-D.ietf-rtcweb-security SYSTEM "http://xml.resource.org/public/rfc/bibxml3/reference.I-D.ietf-rtcweb-security.xml">
+<!ENTITY I-D.ietf-rtcweb-jsep SYSTEM "http://xml.resource.org/public/rfc/bibxml3/reference.I-D.ietf-rtcweb-jsep.xml">
+<!ENTITY I-D.muthu-behave-consent-freshness SYSTEM "http://xml.resource.org/public/rfc/bibxml3/reference.I-D.muthu-behave-consent-freshness.xml">
 
-<!ENTITY I-D.kaufman-rtcweb-security-ui SYSTEM "http://xml.resource.org/public/rfc/bibxml3/reference.I-D.kaufman-rtcweb-security-ui">
-<!ENTITY I-D.jennings-rtcweb-signaling SYSTEM "http://xml.resource.org/public/rfc/bibxml3/reference.I-D.jennings-rtcweb-signaling">
-<!ENTITY I-D.ietf-avtcore-6222bis SYSTEM "http://xml.resource.org/public/rfc/bibxml3/reference.I-D.ietf-avtcore-6222bis">
-<!ENTITY I-D.ietf-tsvwg-sctp-dtls-encaps SYSTEM "http://xml.resource.org/public/rfc/bibxml3/reference.I-D.ietf-tsvwg-sctp-dtls-encaps">
+<!ENTITY I-D.kaufman-rtcweb-security-ui SYSTEM "http://xml.resource.org/public/rfc/bibxml3/reference.I-D.kaufman-rtcweb-security-ui.xml">
+<!ENTITY I-D.jennings-rtcweb-signaling SYSTEM "http://xml.resource.org/public/rfc/bibxml3/reference.I-D.jennings-rtcweb-signaling.xml">
+<!ENTITY I-D.ietf-avtcore-6222bis SYSTEM "http://xml.resource.org/public/rfc/bibxml3/reference.I-D.ietf-avtcore-6222bis.xml">
+<!ENTITY I-D.ietf-tsvwg-sctp-dtls-encaps SYSTEM "http://xml.resource.org/public/rfc/bibxml3/reference.I-D.ietf-tsvwg-sctp-dtls-encaps.xml">
 ]>
 
 <?xml-stylesheet type="text/xsl" href="rfc2629.xslt" ?>
@@ -1996,7 +1996,8 @@
       </section>
     </section>
   </section>
-  <section title="IANA Considerations">
+
+  <section title="IANA Considerations"anchor="sec.iana-cons">
     <t>[TODO: IANA registration for Identity header. Or should this be in MMUSIC?]</t>
   </section>
 

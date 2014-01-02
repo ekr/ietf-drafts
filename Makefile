@@ -11,7 +11,7 @@ all: $(HTML) $(TXT) $(DIF)
 #	../xml2rfc.tcl $^ $@
 
 %.html: %.xml
-	xsltproc -o $@ ../rfc2629.xslt $^
+	xsltproc -o $@ rfc2629.xslt $^
 
 %.txt: %.xml
 	xml2rfc $^ $@
