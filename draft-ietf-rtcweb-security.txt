@@ -26,17 +26,6 @@ Abstract
    their camera.  This document defines the WebRTC threat model and
    analyzes the security threats of WebRTC in that model.
 
-Legal
-
-   THIS DOCUMENT AND THE INFORMATION CONTAINED THEREIN ARE PROVIDED ON
-   AN "AS IS" BASIS AND THE CONTRIBUTOR, THE ORGANIZATION HE/SHE
-   REPRESENTS OR IS SPONSORED BY (IF ANY), THE INTERNET SOCIETY, THE
-   IETF TRUST, AND THE INTERNET ENGINEERING TASK FORCE, DISCLAIM ALL
-   WARRANTIES, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY
-   WARRANTY THAT THE USE OF THE INFORMATION THEREIN WILL NOT INFRINGE
-   ANY RIGHTS OR ANY IMPLIED WARRANTIES OF MERCHANTABILITY OR FITNESS
-   FOR A PARTICULAR PURPOSE.
-
 Status of this Memo
 
    This Internet-Draft is submitted in full conformance with the
@@ -49,14 +38,6 @@ Status of this Memo
 
    Internet-Drafts are draft documents valid for a maximum of six months
    and may be updated, replaced, or obsoleted by other documents at any
-
-
-
-Rescorla                Expires January 16, 2014                [Page 1]
-
-Internet-Draft               WebRTC Security                   July 2013
-
-
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
@@ -68,6 +49,14 @@ Copyright Notice
    document authors.  All rights reserved.
 
    This document is subject to BCP 78 and the IETF Trust's Legal
+
+
+
+Rescorla                Expires January 16, 2014                [Page 1]
+
+Internet-Draft               WebRTC Security                   July 2013
+
+
    Provisions Relating to IETF Documents
    (http://trustee.ietf.org/license-info) in effect on the date of
    publication of this document.  Please review these documents
@@ -88,6 +77,17 @@ Copyright Notice
    not be created outside the IETF Standards Process, except to format
    it for publication as an RFC or to translate it into languages other
    than English.
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1165,8 +1165,8 @@ Internet-Draft               WebRTC Security                   July 2013
 
    [I-D.ietf-rtcweb-overview]
               Alvestrand, H., "Overview: Real Time Protocols for Brower-
-              based Applications", draft-ietf-rtcweb-overview-06 (work
-              in progress), February 2013.
+              based Applications", draft-ietf-rtcweb-overview-08 (work
+              in progress), September 2013.
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
 
@@ -1190,9 +1190,9 @@ Internet-Draft               WebRTC Security                   July 2013
               (work in progress), July 2013.
 
    [I-D.ietf-rtcweb-security-arch]
-              Rescorla, E., "RTCWEB Security Architecture",
-              draft-ietf-rtcweb-security-arch-06 (work in progress),
-              January 2013.
+              Rescorla, E., "WebRTC Security Architecture",
+              draft-ietf-rtcweb-security-arch-07 (work in progress),
+              July 2013.
 
    [I-D.kaufman-rtcweb-security-ui]
               Kaufman, M., "Client Security User Interface Requirements
@@ -1200,10 +1200,10 @@ Internet-Draft               WebRTC Security                   July 2013
               progress), June 2011.
 
    [I-D.muthu-behave-consent-freshness]
-              Perumal, M., Wing, D., R, R., and H. Kaplan, "STUN Usage
+              Perumal, M., Wing, D., R, R., and T. Reddy, "STUN Usage
               for Consent Freshness",
-              draft-muthu-behave-consent-freshness-03 (work in
-              progress), February 2013.
+              draft-muthu-behave-consent-freshness-04 (work in
+              progress), July 2013.
 
    [RFC2818]  Rescorla, E., "HTTP Over TLS", RFC 2818, May 2000.
 
