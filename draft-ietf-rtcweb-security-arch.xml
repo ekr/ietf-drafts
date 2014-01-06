@@ -83,18 +83,7 @@
         for
       </t>
     </abstract>
-
-    <note title="Legal">
-      <t>THIS DOCUMENT AND THE INFORMATION CONTAINED THEREIN ARE PROVIDED ON
-      AN &ldquo;AS IS&rdquo; BASIS AND THE CONTRIBUTOR, THE ORGANIZATION
-      HE/SHE REPRESENTS OR IS SPONSORED BY (IF ANY), THE INTERNET SOCIETY, THE
-      IETF TRUST, AND THE INTERNET ENGINEERING TASK FORCE, DISCLAIM ALL
-      WARRANTIES, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY
-      WARRANTY THAT THE USE OF THE INFORMATION THEREIN WILL NOT INFRINGE ANY
-      RIGHTS OR ANY IMPLIED WARRANTIES OF MERCHANTABILITY OR FITNESS FOR A
-      PARTICULAR PURPOSE.</t>
-    </note>
-  </front>
+ </front>
 
   <middle>
     <section title="Introduction" anchor="sec.introduction">
@@ -1997,7 +1986,7 @@
     </section>
   </section>
 
-  <section title="IANA Considerations"anchor="sec.iana-cons">
+  <section title="IANA Considerations" anchor="sec.iana-cons">
     <t>[TODO: IANA registration for Identity header. Or should this be in MMUSIC?]</t>
   </section>
 
