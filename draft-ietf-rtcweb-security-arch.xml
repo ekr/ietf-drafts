@@ -1244,7 +1244,7 @@
 
         <section title="Binding Identity Assertions to JSEP Offer/Answer Transactions" anchor="sec.jsep-binding">
 
-          <section title="Input to Assertion Generation Process">
+          <section title="Input to Assertion Generation Process" anchor="sec.idp-input">
             <t>
               An identity assertion binds the user's identity (as asserted by
               the IdP) to the JSEP offer/exchange transaction and specifically
