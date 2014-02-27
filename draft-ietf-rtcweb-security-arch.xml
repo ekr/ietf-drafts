@@ -1789,7 +1789,7 @@ IdP Proxy -> PeerConnection:
             JS, thus violating the security guarantees otherwise provided by the
             IdP mechanism. Note that it is not sufficient merely to deny the
             content JS direct access to the keys, as some have suggested doing
-            with the WebCrypto API.  <xref target="webcrypto"/>.  The JS must
+            with the <xref target="webcrypto">WebCrypto API</xref>.  The JS must
             also not be allowed to perform operations that would be valid for a
             DTLS endpoint. By far the safest approach is simply to deny the
             ability to perform any operations that depend on secret information
@@ -2175,22 +2175,6 @@ IdP Proxy -> PeerConnection:
       &I-D.ietf-avtcore-6222bis;
       &I-D.ietf-tsvwg-sctp-dtls-encaps;
 
-      <reference anchor="webcrypto">
-        <front>
-          <title>Web Cryptography API</title>
-
-          <author fullname="W3C editors"
-                  surname="Dahl, Sleevi">
-            <organization>W3C</organization>
-          </author>
-
-          <date day="25" month="June" year="2013" />
-        </front>
-
-        <annotation>Available at
-        http://www.w3.org/TR/WebCryptoAPI/</annotation>
-      </reference>
-
       <reference anchor="webrtc-api">
         <front>
           <title>WebRTC 1.0: Real-time Communication Between Browsers</title>
@@ -2234,6 +2218,21 @@ IdP Proxy -> PeerConnection:
           </author>
         </front>
         <format target="http://www.w3.org/TR/XMLHttpRequest/" type="TXT"/>
+      </reference>
+      <reference anchor="webcrypto">
+        <front>
+          <title>Web Cryptography API</title>
+
+          <author fullname="W3C editors"
+                  surname="Dahl, Sleevi">
+            <organization>W3C</organization>
+          </author>
+
+          <date day="25" month="June" year="2013" />
+        </front>
+
+        <annotation>Available at
+        http://www.w3.org/TR/WebCryptoAPI/</annotation>
       </reference>
 
     </references>
