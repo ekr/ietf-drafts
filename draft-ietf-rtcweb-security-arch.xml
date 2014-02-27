@@ -430,7 +430,7 @@
         <t>
           This message is sent to the signaling server, e.g., by XMLHttpRequest
           <xref target="XmlHttpRequest"/> or by WebSockets <xref
-          target="RFC6455"/>.  preferably over TLS <xref target="RFC5246"/>.
+          target="RFC6455"/>, preferably over TLS <xref target="RFC5246"/>.
           The signaling server processes the message from Alice's browser,
           determines that this is a call to Bob and sends a signaling message to
           Bob's browser (again, the format is currently undefined).  The JS on
