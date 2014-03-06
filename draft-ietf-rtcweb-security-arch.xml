@@ -10,7 +10,6 @@
 <!ENTITY RFC4347 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.4347.xml">
 <!ENTITY RFC4568 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.4568.xml">
 <!ENTITY RFC4572 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.4572.xml">
-<!ENTITY RFC4627 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.4627.xml">
 <!ENTITY RFC4848 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.4848.xml">
 <!ENTITY RFC5245 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.5245.xml">
 <!ENTITY RFC5246 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.5246.xml">
@@ -23,6 +22,7 @@
 <!ENTITY RFC6189 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.6189.xml">
 <!ENTITY RFC6454 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.6454.xml">
 <!ENTITY RFC6455 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.6455.xml">
+<!ENTITY RFC7159 SYSTEM "http://xml.resource.org/public/rfc/bibxml/reference.RFC.7159.xml">
 
 <!ENTITY I-D.ietf-avtcore-6222bis SYSTEM "http://xml.resource.org/public/rfc/bibxml3/reference.I-D.ietf-avtcore-6222bis.xml">
 <!ENTITY I-D.ietf-rtcweb-jsep SYSTEM "http://xml.resource.org/public/rfc/bibxml3/reference.I-D.ietf-rtcweb-jsep.xml">
@@ -1268,7 +1268,7 @@
               </artwork>
             </figure>
             <t>
-              This object is encoded in a <xref target="RFC4627">JSON</xref>
+              This object is encoded in a <xref target="RFC7159">JSON</xref>
               string for passing to the IdP.
             </t>
             <t>
@@ -1361,7 +1361,7 @@ a=sendrecv
             <t>
               Messages between the PeerConnection object and the IdP proxy are
               JavaScript objects, shown in examples using JSON <xref
-              target="RFC4627"/>.  For instance, the PeerConnection would
+              target="RFC7159"/>.  For instance, the PeerConnection would
               request a signature with the following "SIGN" message:
             </t>
             <figure>
@@ -2241,7 +2241,6 @@ IdP -> PeerConnection:
       &RFC3711;
       &RFC4347;
       &RFC4572;
-      &RFC4627;
       &RFC4848;
       &RFC5245;
       &RFC5246;
@@ -2250,6 +2249,7 @@ IdP -> PeerConnection:
       &RFC5785;
       &RFC5890;
       &RFC6454;
+      &RFC7159;
 
       &I-D.ietf-rtcweb-security;
       &I-D.muthu-behave-consent-freshness;
