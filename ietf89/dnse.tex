@@ -1,0 +1,187 @@
+\documentclass[helvetica]{seminar} 
+\input{xy}
+\xyoption{all}
+\usepackage{graphicx} 
+\usepackage{slidesec} 
+\usepackage{url}
+\usepackage[framemethod=TikZ]{mdframed}
+
+\long\def\symbolfootnote[#1]#2{\begingroup%
+\def\thefootnote{\fnsymbol{footnote}}\footnote[#1]{#2}\endgroup}
+
+% to fix problems making landscape seminar pdfs
+% Letter...
+\pdfpagewidth=11truein
+\pdfpageheight=8.5truein
+\pdfhorigin=1truein     % default value(?), but doesn't work without
+\pdfvorigin=1truein     % default value(?), but doesn't work without
+% A4
+%\pdfpagewidth=297truemm % your milage may vary....
+%\pdfpageheight=210truemm
+%\pdfhorigin=1truein     % default value(?), but doesn't work without
+%\pdfvorigin=1truein     % default value(?), but doesn't work without
+
+
+
+\renewcommand{\familydefault}{\sfdefault}  
+ 
+\input{seminar.bug} 
+\input{seminar.bg2} % See the Seminar bugs list 
+ 
+\slideframe{none} 
+ 
+ 
+\usepackage{fancyhdr} 
+ 
+% Headers and footers personalization using the `fancyhdr' package 
+\fancyhf{} % Clear all fields 
+\renewcommand{\headrulewidth}{0mm} 
+\renewcommand{\footrulewidth}{0.1mm} 
+ 
+\fancyfoot[L]{\tiny IETF 89} 
+\fancyfoot[C]{\tiny DTLS and IPsec for DNSE}
+\fancyfoot[R]{\tiny \theslide} 
+ 
+ 
+% To center horizontally the headers and footers (see seminar.bug) 
+\renewcommand{\headwidth}{\textwidth} 
+
+% To adjust the frame length to the header and footer ones 
+\autoslidemarginstrue 
+\pagestyle{fancy} 
+ 
+
+\newcommand{\heading}[1]{% 
+  \begin{center} 
+    \large\bf 
+    #1 
+  \end{center} 
+  \vspace{.4 in}} 
+
+
+\begin{document}
+\begin{slide}
+\begin{center}
+\vspace{.5 in}
+\LARGE{{\bf}DTLS and IPsec for DNSE}\\
+\vspace{.2in}
+\vspace{3em}
+\large{
+\begin{tabular}{c}
+Eric Rescorla\\
+Mozilla\\
+\url{ekr@rtfm.com}
+\end{tabular}
+}
+\end{center}
+
+\end{slide}
+
+\centerslidesfalse 
+
+
+\begin{slide}
+\heading{Basic assumptions}
+
+\begin{itemize}
+\item We have some other mechanism for identifying the expected server key
+  \begin{itemize}
+  \item Manual configuration for configured resolvers
+  \item DNS records for authoritative servers
+  \end{itemize}
+
+\item Client is anonymous
+\end{itemize}
+
+\end{slide}
+
+
+\begin{slide}
+\heading{General Pattern (current)}
+
+\vspace{-.55in}
+$$
+\xymatrix@C=1.2in@R=.2in{
+  Client & & Server \\
+  \ar@{<->}[rr]^{\txt{Handshake/Setup}}& & \\
+  \ar[rr]^{\txt{DNS Request}} & &\\
+  & & \ar[ll]_{\txt{DNS Response}}
+ & ...
+}
+$$
+
+\begin{itemize}
+\item What is this handshake thing?
+\begin{itemize}
+\item DTLS and IPsec both need a cryptographic handshake to set up the parameters and exchange keys
+\end{itemize}
+\item Once keys are exchanged, you just send UDP
+\begin{itemize}
+\item DTLS: DNS Message/DTLS record/UDP/IP
+\item IPsec: DNS Message/UDP/IPsec packet
+\end{itemize}
+\end{itemize}
+\end{slide}
+
+
+\begin{slide}
+\heading{Handshake Issues: NAT/Firewall Penetration}
+
+\begin{itemize}
+\item The handshake needs to get through middleboxes
+\item Both handshakes are carried over UDP
+  \begin{itemize}
+  \item DTLS on the same port
+  \item IPsec on a separate (defined) port
+  \end{itemize}
+
+\item We have to worry about these UDP packets being blocked
+  \begin{itemize}
+    \item Lots of people block non-53 UDP
+      \begin{itemize}
+      \item Though maybe pass IKE
+      \end{itemize}
+    \item But there are also protocol enforcement devices that enforce things look like DNS
+  \end{itemize}
+
+\item Also need to worry about middleboxes blocking ESP
+\end{itemize}
+\end{slide}
+
+\begin{slide}
+\heading{Handshake Latency}
+
+\begin{itemize}
+\item The handshake isn't free (1-2 RTT)
+\item Not a big problem for connections to your recursive resolver
+  \begin{itemize}
+  \item Just do a setup at bootup and then send requests over it
+  \item Though requires storing state at the server
+  \end{itemize}
+
+\item Less good when you are the recursive resolver
+  \begin{itemize}
+  \item Need to handshake for each new resolver you see
+  \item Current option: bear the cost of the handshake each time
+  \item Future options: TLS WG is currently designing 0-RTT modes for TLS 1.3 which might help
+  \end{itemize}
+\end{itemize}
+\end{slide}
+
+
+\begin{slide}
+\heading{Final Thoughts}
+
+\begin{itemize}
+\item IPsec probably isn't going to work here
+\item DTLS might work
+  \begin{itemize}
+  \item But potential firewall and performance issues need research
+  \end{itemize}
+
+\item Happy to help if people want to talk more
+\end{itemize}
+
+\end{slide}
+
+\end{document}

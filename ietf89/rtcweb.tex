@@ -1,0 +1,131 @@
+\documentclass[helvetica]{seminar} 
+\input{xy}
+\xyoption{all}
+\usepackage{graphicx} 
+\usepackage{slidesec} 
+\usepackage{url}
+\usepackage[framemethod=TikZ]{mdframed}
+
+\long\def\symbolfootnote[#1]#2{\begingroup%
+\def\thefootnote{\fnsymbol{footnote}}\footnote[#1]{#2}\endgroup}
+
+% to fix problems making landscape seminar pdfs
+% Letter...
+\pdfpagewidth=11truein
+\pdfpageheight=8.5truein
+\pdfhorigin=1truein     % default value(?), but doesn't work without
+\pdfvorigin=1truein     % default value(?), but doesn't work without
+% A4
+%\pdfpagewidth=297truemm % your milage may vary....
+%\pdfpageheight=210truemm
+%\pdfhorigin=1truein     % default value(?), but doesn't work without
+%\pdfvorigin=1truein     % default value(?), but doesn't work without
+
+
+
+\renewcommand{\familydefault}{\sfdefault}  
+ 
+\input{seminar.bug} 
+\input{seminar.bg2} % See the Seminar bugs list 
+ 
+\slideframe{none} 
+ 
+ 
+\usepackage{fancyhdr} 
+ 
+% Headers and footers personalization using the `fancyhdr' package 
+\fancyhf{} % Clear all fields 
+\renewcommand{\headrulewidth}{0mm} 
+\renewcommand{\footrulewidth}{0.1mm} 
+ 
+\fancyfoot[L]{\tiny IETF 89} 
+\fancyfoot[C]{\tiny RTCWEB Security Arch}
+\fancyfoot[R]{\tiny \theslide} 
+ 
+ 
+% To center horizontally the headers and footers (see seminar.bug) 
+\renewcommand{\headwidth}{\textwidth} 
+
+% To adjust the frame length to the header and footer ones 
+\autoslidemarginstrue 
+\pagestyle{fancy} 
+ 
+
+\newcommand{\heading}[1]{% 
+  \begin{center} 
+    \large\bf 
+    #1 
+  \end{center} 
+  \vspace{.4 in}} 
+
+
+\begin{document}
+\begin{slide}
+\begin{center}
+\vspace{.5 in}
+\LARGE{{\bf}RTCWEB Security Architecture Update}\\
+\vspace{.2in}
+\vspace{3em}
+\large{
+\begin{tabular}{c}
+Eric Rescorla\\
+Mozilla\\
+\url{ekr@rtfm.com}
+\end{tabular}
+}
+\end{center}
+
+\end{slide}
+
+\centerslidesfalse 
+
+
+\begin{slide}
+\heading{COMSEC}
+
+\begin{itemize}
+\item MUST NOT for SDES
+\item Mandatory cipher suites
+  \begin{itemize}
+  \item TLS\_DHE\_RSA\_WITH\_AES\_128\_GCM\_SHA256 and TLS\_ECDHE\_RSA\_WITH\_AES\_128\_GCM\_SHA256 
+  \item SRTP\_AES128\_CM\_HMAC\_SHA1\_80
+  \end{itemize}
+\item Implementations SHOULD favor cipher suites which support PFS over non-PFS cipher suites.
+\item Note: ECDHE still not standards track in TLS
+  \begin{itemize}
+  \item But we are looking at it in TLS
+  \end{itemize}
+\end{itemize}
+
+\end{slide}
+
+
+\begin{slide}
+\heading{Identity}
+
+\begin{itemize}
+\item Convert \verb^postMessage()^ to a named \verb^MessageChannel^
+  \begin{itemize}
+  \item This removes the need to have an \verb^rtcweb://^ origin
+  \end{itemize}
+
+\item Remove displayname field
+\item Clearer rules about identity string format
+\item Slightly restructure IdP verification response to reduce depth
+\item Rules for sanitizing IdP domain names
+\end{itemize}
+
+\end{slide}
+
+\begin{slide}
+\heading{What's next?}
+
+\begin{itemize}
+\item Martin has some comments about IdP based on Mozilla's implementation
+\item Plan is to address those and then be ready for another WGLC.
+\end{itemize}
+
+\end{slide}
+
+
+\end{document}

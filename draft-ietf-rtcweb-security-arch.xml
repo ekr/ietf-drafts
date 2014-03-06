@@ -41,7 +41,7 @@
 <?rfc rfcedstyle="no" ?>
 <!-- Don't change this. It breaks stuff -->
 <?rfc tocdepth="4"?>
-<rfc category="std" docName="draft-ietf-rtcweb-security-arch-07"
+<rfc category="std" docName="draft-ietf-rtcweb-security-arch-09"
      ipr="pre5378Trust200902">
   <front>
     <title abbrev="WebRTC Sec. Arch.">WebRTC Security Architecture</title>
@@ -68,7 +68,7 @@
       </address>
     </author>
 
-    <date day="14" month="July" year="2013" />
+    <date day="14" month="February" year="2014" />
 
     <area>RAI</area>
 
@@ -865,17 +865,19 @@
         <t>
           All media channels MUST be secured via SRTP.  Media traffic MUST NOT
           be sent over plain (unencrypted) RTP.  DTLS-SRTP MUST be offered for
-          every media channel and MUST be the default; i.e., if an
-          implementation receives an offer for DTLS-SRTP and SDES, DTLS-SRTP
-          MUST be selected.
+          every media channel. WebRTC implements MUST NOT offer SDES or
+          select it if offered.
         </t>
         <t>
           All data channels MUST be secured via DTLS.
         </t>
         <t>
-          [OPEN ISSUE: What should the settings be here? MUST?]  Implementations
-          MAY support SDES for media traffic for backward compatibility
-          purposes.
+          [[OPEN ISSUE: Are these the right cipher suites?]]
+          All implementations MUST implement the following two cipher suites:
+          TLS_DHE_RSA_WITH_AES_128_GCM_SHA256 and TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+          and the DTLS-SRTP protection profile SRTP_AES128_CM_HMAC_SHA1_80.
+          Implementations SHOULD favor cipher suites which support PFS over
+          non-PFS cipher suites.
         </t>
         <!-- OPEN ISSUE: DTLS-SRTP key origin scoping? -->
         <t>
@@ -1507,11 +1509,14 @@ a=sendrecv
   https://example.com/.well-known/idp-proxy/example
   ]]></artwork>
               </figure>
+<!--  [[TODO: suggested by mt]]
+
+
               <t>
                 The IdP proxy MUST be prevented from redirecting or navigating
                 the IdP frame to another site.
               </t>
-
+-->
               <section title="Authenticating Party">
                 <t>
                   How an AP determines the appropriate IdP domain is out of
@@ -1555,8 +1560,7 @@ a=sendrecv
                 "SIGN" message.  Aside from the mandatory fields, this message
                 has a <spanx style="verb">message</spanx> field containing a
                 string.  The string contains a JSON-encoded object containing
-                certificate fingerprints as described in <xref
-                target="sec.idp-input"/>, but are treated as opaque from the
+                certificate fingerprints but are treated as opaque from the
                 perspective of the IdP.
               </t>
               <t>
@@ -1646,8 +1650,7 @@ IdPProxy -> PeerConnection:
                   </t>
                   <t hangText="contents:">
                     The original unmodified string provided by the AP in the
-                    original SIGN request (i.e., the JSON-encoded string
-                    described in <xref target="sec.idp-input"/>).
+                    original SIGN request.
                   </t>
                 </list>
               </t>
@@ -2350,7 +2353,7 @@ IdP Proxy -> PeerConnection:
    s= \n
    c=IN IP4 192.0.2.1\n
    t=2873397496 2873404696\n
-   a=fingerprint:SHA-256 ...\n
+   a=fingerprint:SHA-1 ...\n
    4A:AD:B9:B1:3F:82:18:3B:54:02:12:DF:3E:5D:49:6B:19:E5:7C:AB\n
    a=identity [[base-64 encoding of identity assertion:
      {

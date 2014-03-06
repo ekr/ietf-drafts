@@ -36,7 +36,7 @@
 <?rfc rfcedstyle="no" ?>
 <!-- Don't change this. It breaks stuff -->
 <?rfc tocdepth="4"?>
-<rfc category="std" docName="draft-ietf-rtcweb-security-05"
+<rfc category="std" docName="draft-ietf-rtcweb-security-06"
      ipr="pre5378Trust200902">
   <front>
     <title abbrev="WebRTC Security">Security Considerations for WebRTC</title>
@@ -63,7 +63,7 @@
       </address>
     </author>
 
-    <date day="15" month="July" year="2013" />
+    <date day="22" month="January" year="2014" />
 
     <area>RAI</area>
 
@@ -371,7 +371,7 @@
             screen sharing the browser, then this violates that invariant,
             with serious security consequences. For example, an attacker site
             might request screen sharing and then briefly open up a new
-            Window to the user's bank or Gmail account, using screen sharing
+            Window to the user's bank or webmail account, using screen sharing
             to read the resulting displayed content. A more sophisticated
             attack would be open up a source view window to a site and use the
             screen sharing result to view anti cross-site request forgery tokens.

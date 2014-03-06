@@ -1,0 +1,174 @@
+\documentclass[helvetica]{seminar} 
+\input{xy}
+\xyoption{all}
+\usepackage{graphicx} 
+\usepackage{slidesec} 
+\usepackage{url}
+\usepackage[framemethod=TikZ]{mdframed}
+
+\long\def\symbolfootnote[#1]#2{\begingroup%
+\def\thefootnote{\fnsymbol{footnote}}\footnote[#1]{#2}\endgroup}
+
+% to fix problems making landscape seminar pdfs
+% Letter...
+\pdfpagewidth=11truein
+\pdfpageheight=8.5truein
+\pdfhorigin=1truein     % default value(?), but doesn't work without
+\pdfvorigin=1truein     % default value(?), but doesn't work without
+% A4
+%\pdfpagewidth=297truemm % your milage may vary....
+%\pdfpageheight=210truemm
+%\pdfhorigin=1truein     % default value(?), but doesn't work without
+%\pdfvorigin=1truein     % default value(?), but doesn't work without
+
+
+
+\renewcommand{\familydefault}{\sfdefault}  
+ 
+\input{seminar.bug} 
+\input{seminar.bg2} % See the Seminar bugs list 
+ 
+\slideframe{none} 
+ 
+ 
+\usepackage{fancyhdr} 
+ 
+% Headers and footers personalization using the `fancyhdr' package 
+\fancyhf{} % Clear all fields 
+\renewcommand{\headrulewidth}{0mm} 
+\renewcommand{\footrulewidth}{0.1mm} 
+ 
+\fancyfoot[L]{\tiny IETF 89} 
+\fancyfoot[C]{\tiny HPACK Security Overview}
+\fancyfoot[R]{\tiny \theslide} 
+ 
+ 
+% To center horizontally the headers and footers (see seminar.bug) 
+\renewcommand{\headwidth}{\textwidth} 
+
+% To adjust the frame length to the header and footer ones 
+\autoslidemarginstrue 
+\pagestyle{fancy} 
+ 
+
+\newcommand{\heading}[1]{% 
+  \begin{center} 
+    \large\bf 
+    #1 
+  \end{center} 
+  \vspace{.4 in}} 
+
+
+\begin{document}
+\begin{slide}
+\begin{center}
+\vspace{.5 in}
+\LARGE{{\bf}HPACK Security Observations}\\
+\vspace{.2in}
+\vspace{3em}
+\large{
+\begin{tabular}{c}
+Eric Rescorla\\
+Mozilla\\
+\url{ekr@rtfm.com}
+\end{tabular}
+}
+\end{center}
+
+\end{slide}
+
+\centerslidesfalse 
+
+
+\begin{slide}
+\heading{Threat Model Overview (Abstract)}
+
+\begin{itemize}
+\item Compression function acts as an oracle
+\item Attacker can \emph{query} the oracle to see if a given header/value is present
+\item Gets one bit in response: \emph{was this value seen before?}
+\item[]
+\item What can the attacker do?
+  \begin{itemize}
+  \item Search the space of a given header
+  \item Only works with low entropy secrets
+  \end{itemize}
+\end{itemize}
+\end{slide}
+
+
+\begin{slide}
+\heading{Is there any way to exploit this in HTTPS?}
+
+\begin{itemize}
+\item Cookies are pretty high entropy
+\item But what about passwords?
+  \begin{itemize}
+  \item Often very low entropy
+  \item Appear in headers with basic auth (how commonly is this used?)
+  \item Absent CORS JS probably can't modify this header
+  \end{itemize}
+\item What about other headers?
+\item And other technologies? (Flash, etc.)
+\end{itemize}
+\end{slide}
+
+
+\begin{slide}
+\heading{Why is this stronger than just querying the server?}
+
+\vspace{-.55in}
+$$
+\xymatrix@C=1.2in@R=.2in{
+  Client & Attacker & Server \\
+  & \ar[l]_{\txt{Attack Code}} \\
+  \ar@{<->}[rr]^{\txt{TLS Handshake}} & & \\
+  \ar@{->}[r]^{\txt{Requests with guessed secret }} & X \\
+}
+$$
+
+\begin{itemize}
+\item Most servers have mechanisms to prevent fast guessing attacks
+  \begin{itemize}
+  \item Rate limiting, limited try, etc.
+  \end{itemize}
+
+\item The attacker allows the client and server to set up an HTTP2/TLS connection
+\item The attacker injects queries with their guesses
+  \begin{itemize}
+  \item But blocks the client's requests to the server
+  \item So the server never sees the guesses
+  \end{itemize}
+
+\end{itemize}
+
+\end{slide}
+
+
+\begin{slide}
+\heading{Some words from Adam Barth}
+
+\footnotesize{
+\begin{quote}
+``The situation gets worse if we consider non-standard web technology,
+such as Flash.  For example, Flash's URLRequest API lets the attacker
+set a wide variety of headers because it uses a header blacklist
+rather than a whitelist [2].  Worse, Flash permits the attacker to
+issue such requests across origins via the navigateToURL API.  It just
+so happens that the Authorization header is on Flash's header
+blacklist, but we need to consider the possibility that web sites will
+store sensitive information in headers that aren't on Flash's
+blacklist.
+
+One reaction I can imagine to this issue is to blame Flash and decry
+its use of a blacklist rather than a whitelist for security, but that
+misses the larger point that HPACK weakens security because it
+requires all downstream technologies to maintain more invariants in
+order to avoid leaking sensitive information out of an otherwise
+secure channel.''
+\end{quote}
+}
+
+\end{slide}
+
+\end{document}
