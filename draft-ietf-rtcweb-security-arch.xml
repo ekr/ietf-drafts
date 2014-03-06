@@ -1415,6 +1415,11 @@ a=sendrecv
                 </t>
               </list>
             </t>
+            <t>
+              Messages to an IdP using HTTP MUST include the <xref
+              target="RFC6454">Origin header field</xref> set to the origin of
+              the requesting application.
+            </t>
           </section>
 
           <section title="Errors">
@@ -2053,9 +2058,10 @@ IdP -> PeerConnection:
               through the usual IdP permissions dialog) or arrange that the
               identity information is only available to known RPs (e.g., social
               graph adjacencies) but not to the calling site. The "origin" field
-              of the signature request can be used to check that the user has
-              agreed to disclose their identity to the calling site; because it
-              is supplied by the PeerConnection it can be trusted to be correct.
+              of the signature request (or the HTTP Origin header field) can be
+              used to check that the user has agreed to disclose their identity
+              to the calling site; because it is supplied by the PeerConnection
+              it can be trusted to be correct.
             </t>
           </section>
 
