@@ -170,9 +170,43 @@ struct {
 
 
 \begin{slide}
-\heading{Connection ID}
+\heading{Connection ID: Problem and Solution}
+\begin{itemize} 
+\item Demultiplexing based on 5 tuple
+\item If NAT binding expires server cannot find security context.
+\item Happens if IoT devices enter a sleep cycle.
+\item Solution: Add additional identifier to record layer header.
+\end{itemize}
+\end{slide}
 
-[TODO: Hannes]
+\begin{slide}
+\heading{Connection ID: Design Decisions}
+\begin{itemize} 
+
+\item Should there be a negotation? Preference: no
+
+\item What messages should use it?  
+
+  \begin{itemize} 
+  \item Everything except ClientHello (for backwards compatibility)?
+  \item Messages protected using keys derived from a handshake\_traffic\_secret 
+  \end{itemize} 
+
+\item Unlinkability property desirable to some: possible approaches
+
+  \begin{itemize} 
+  \item Static identifier similar to IPsec SPI
+  \item Hash chain-based approach
+  \item Support only one or both?  
+  \end{itemize} 
+
+\item Semantic of the API changes. Incoming packet may belong to ... 
+  \begin{itemize} 
+  \item new connection attempt
+  \item already established connection but cannot be associated with a socket
+  \end{itemize} 
+  
+\end{itemize} 
 \end{slide}
 
 
