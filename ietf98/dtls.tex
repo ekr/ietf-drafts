@@ -168,65 +168,17 @@ struct {
 
 \end{slide}
 
-
 \begin{slide}
-\heading{Connection ID: Problem and Solution}
-\begin{itemize} 
-\item Demultiplexing based on 5 tuple
-\item If NAT binding expires server cannot find security context.
-\item Happens if IoT devices enter a sleep cycle.
-\item Solution: Add additional identifier to record layer header.
-\end{itemize}
-\end{slide}
-
-\begin{slide}
-\heading{Connection ID: Design Decisions}
-\begin{itemize} 
-
-\item Should there be a negotation? Preference: no
-
-\item What messages should use it?  
-
-  \begin{itemize} 
-  \item Everything except ClientHello (for backwards compatibility)?
-  \item Messages protected using keys derived from a handshake\_traffic\_secret 
-  \end{itemize} 
-
-\item Unlinkability property desirable to some: possible approaches
-
-  \begin{itemize} 
-  \item Static identifier similar to IPsec SPI
-  \item Hash chain-based approach
-  \item Support only one or both?  
-  \end{itemize} 
-
-\item Semantic of the API changes. Incoming packet may belong to ... 
-  \begin{itemize} 
-  \item new connection attempt
-  \item already established connection but cannot be associated with a socket
-  \end{itemize} 
-  
-\end{itemize} 
-\end{slide}
-
-
-\begin{slide}
-\heading{Handshake Message Transcript}
+\heading{What epoch should ACKs be encrypted under?}
 
 \begin{itemize}
-\item The TLS and DTLS transcripts are different
-\item Both include the message header
+\item Issue here is key transitions
+\item E.g., ACK of the client Finished
   \begin{itemize}
-  \item But headers are different
-  \item DTLS includes a (synthetic) DTLhandshake message header
-  \end{itemize}
-\item We could just do the TLS message header
-  \begin{itemize}
-  \item Cross-version consistency between cross-protocol consistency
+  \item Natural to match the epoch of what you're ACKing
+  \item But this may mean you have two keys
   \end{itemize}
 \end{itemize}
-
-
 \end{slide}
 
 \begin{slide}
@@ -286,7 +238,8 @@ struct {
 \begin{verbatim}
 001eesss ssssssss
 
-Where ee = epoch modulo 4 and ss..ss = sequence number modulo 2048
+Where ee = epoch modulo 4 and ss..ss = sequence number
+modulo 2048
 \end{verbatim}
 
 \begin{itemize}
@@ -295,6 +248,104 @@ Where ee = epoch modulo 4 and ss..ss = sequence number modulo 2048
 \end{itemize}
 
 \end{slide}
+
+
+\begin{slide}
+\heading{Connection ID: Problem and Solution}
+\begin{itemize} 
+\item Demultiplexing based on 5 tuple
+\item If NAT binding expires server cannot find security context.
+\item Happens if IoT devices enter a sleep cycle.
+\item Solution: Add additional identifier to record layer header.
+\end{itemize}
+\end{slide}
+
+\begin{slide}
+\heading{Connection ID: Design Decisions}
+
+\vspace{-3ex}
+\begin{itemize} 
+\item Should there be a negotation?
+\item What messages should use it?  
+  \begin{itemize} 
+  \item Everything except ClientHello (for backwards compatibility)?
+  \item Messages protected using keys derived from a handshake\_traffic\_secret 
+  \end{itemize} 
+
+\item Unlinkability property desirable to some: possible approaches
+
+  \begin{itemize} 
+  \item Static identifier similar to IPsec SPI
+  \item Hash chain/Counter-based approach
+  \item Token bucket with receiver-side refresh
+  \end{itemize} 
+
+\item Somehow you need to demux these
+  \begin{itemize} 
+  \item Either outside DTLS
+  \item Or change the stack somehow
+  \end{itemize} 
+\end{itemize} 
+\end{slide}
+
+\begin{slide}
+\heading{Hash chains}
+
+\begin{itemize}
+\item Peers exchange $K_u$
+  \begin{itemize}
+  \item Packet $i$ uses conn id $E(K_u, i)$ (or $trunc(H^i(K))$
+  \end{itemize}
+
+\item Expensive to process with reordering
+  \begin{itemize}
+  \item Either precompute a bunch of values (memory cost)
+  \item Or you have to compute packet $i$ for all $K_u$ when you get an out-of-order packet
+  \end{itemize}
+\end{itemize}
+\end{slide}
+
+
+\begin{slide}
+\heading{Token Buckets}
+
+\begin{itemize}
+\item Server has a single static key $K$
+\item Server gives client $n$ tokens $T_0, T_1, ... T_n$
+  \begin{itemize}
+  \item $T_i = E(K, u || i)$
+  \end{itemize}
+\item Client uses a fresh token for each packet
+\item Server replenishes tokens in response to packets
+\item Consumes a lot of bandwidth
+  \begin{itemize}
+  \item Each token is sent twice
+  \item Tokens have a minimum size
+  \end{itemize}
+
+\end{itemize}
+
+\end{slide}
+
+\begin{slide}
+\heading{Handshake Message Transcript}
+
+\begin{itemize}
+\item The TLS and DTLS transcripts are different
+\item Both include the message header
+  \begin{itemize}
+  \item But headers are different
+  \item DTLS includes a (synthetic) DTLhandshake message header
+  \end{itemize}
+\item We could just do the TLS message header
+  \begin{itemize}
+  \item Cross-version consistency between cross-protocol consistency
+  \end{itemize}
+\end{itemize}
+
+
+\end{slide}
+
 
 \begin{slide}
 \heading{Other issues?}
