@@ -1,0 +1,247 @@
+\documentclass[helvetica]{seminar} 
+\input{xy}
+\xyoption{all}
+\usepackage{graphicx} 
+\usepackage{slidesec} 
+\usepackage{url}
+\usepackage[normalem]{ulem}
+\usepackage[usenames]{color}
+
+\long\def\symbolfootnote[#1]#2{\begingroup%
+\def\thefootnote{\fnsymbol{footnote}}\footnote[#1]{#2}\endgroup}
+
+% to fix problems making landscape seminar pdfs
+% Letter...
+\pdfpagewidth=11truein
+\pdfpageheight=8.5truein
+\pdfhorigin=1truein     % default value(?), but doesn't work without
+\pdfvorigin=1truein     % default value(?), but doesn't work without
+% A4
+%\pdfpagewidth=297truemm % your milage may vary....
+%\pdfpageheight=210truemm
+%\pdfhorigin=1truein     % default value(?), but doesn't work without
+%\pdfvorigin=1truein     % default value(?), but doesn't work without
+
+
+
+\renewcommand{\familydefault}{\sfdefault}  
+ 
+\input{seminar.bug} 
+\input{seminar.bg2} % See the Seminar bugs list 
+ 
+\slideframe{none} 
+ 
+ 
+\usepackage{fancyhdr} 
+ 
+% Headers and footers personalization using the `fancyhdr' package 
+\fancyhf{} % Clear all fields 
+\renewcommand{\headrulewidth}{0mm} 
+\renewcommand{\footrulewidth}{0.1mm} 
+ 
+\fancyfoot[L]{\tiny HTTP Workshop} 
+\fancyfoot[C]{\tiny Jun 11, 2017}
+\fancyfoot[R]{\tiny \theslide} 
+ 
+ 
+% To center horizontally the headers and footers (see seminar.bug) 
+\renewcommand{\headwidth}{\textwidth} 
+
+% To adjust the frame length to the header and footer ones 
+\autoslidemarginstrue 
+\pagestyle{fancy} 
+ 
+
+\newcommand{\heading}[1]{% 
+  \begin{center} 
+    \large\bf 
+    #1 
+  \end{center} 
+  \vspace{.4 in}} 
+
+\begin{document}
+
+\centerslidestrue
+
+
+\begin{slide}
+\begin{center}
+\vspace{1 in}
+\LARGE{{\bf}TLS 1.3, 0-RTT, HTTP, and You} \\
+\vspace{.2in}
+\large{
+\begin{tabular}{c}
+Eric Rescorla\\
+Mozilla\\
+\url{ekr@rtfm.com}
+\end{tabular}
+}
+\end{center}
+
+\end{slide}
+
+\centerslidesfalse
+
+\begin{slide}
+\heading{What you need to know about TLS 1.3}
+
+\vspace{-5ex}
+\begin{itemize}
+\item Newest version of TLS -- gradually rolling out
+  \begin{itemize}
+  \item On by default in beta versions of Chrome, Firefox (and off by default in pre-release Safari)
+  \item Already on on Cloudflare, Gmail, etc.
+  \item Some fighting with broken middleboxes
+  \end{itemize}
+\item A bunch of security improvements
+  \begin{itemize}
+  \item Improved metadata resistance
+  \item Encrypted certificates
+  \item Optional padding feature
+  \end{itemize}
+\item Performance improvements (this is what you care about)
+  \begin{itemize}
+  \item 0.5-RTT data (on server’s first flight)
+  \item 0-RTT data (on client’s first flight)
+  \end{itemize}
+\end{itemize}
+
+\end{slide}
+
+\begin{slide}
+\heading{Basic TLS 1.3 Handshake}
+
+\footnotesize{
+$$
+\xymatrix@C=3in@R=.3in{
+\ar[r]^{\txt{ClientHello}} & \\
+& \ar[l]_{\txt{ServerHello, EncryptedExtensions}}^{\txt{Certificate, CertificateVerify, Finished}} \\
+\ar[r]^{\txt{[Certificate, CertificateVerify], Finished}} & \\
+\ar@{<->}[r]^{\txt{Application Data}} & \\
+}
+$$
+}
+\end{slide}
+
+
+\begin{slide}
+\heading{0.5 RTT Data}
+
+\footnotesize{
+$$
+\xymatrix@C=3in@R=.3in{
+\ar[r]^{\txt{ClientHello}} & \\
+& \ar[l]_{\txt{ServerHello, EncryptedExtensions}}^{\txt{Certificate, CertificateVerify, Finished}} \\
+& \ar[l]_{\txt{\color{blue} 0.5-RTT Application Data}} \\
+\ar[r]^{\txt{[Certificate, CertificateVerify], Finished}} & \\
+\ar@{<->}[r]^{\txt{Application Data}} & \\
+}
+$$
+}
+\end{slide}
+
+
+\begin{slide}
+\heading{0.5-RTT Data Limitations}
+
+\begin{itemize}
+\item Happens before client certificate
+  \begin{itemize}
+  \item So clients are anonymous
+  \item ... unless they are resuming a client authenticated connection
+  \end{itemize}
+
+\item You don't know if the client is live
+  \begin{itemize}
+  \item Attacker could just be sending a replayed ClientHello
+  \item More relevant for resumption
+  \end{itemize}
+\end{itemize}
+\end{slide}
+
+\begin{slide}
+\heading{Potential 0.5-RTT Uses (HTTP)}
+
+\begin{itemize}
+\item SETTINGs frames
+\item ORIGIN frame
+\item Auth certificate data
+\item Pushing commonly used data (e.g., \verb^/index.html^)
+\item DNS priming
+\end{itemize}
+\end{slide}
+
+\begin{slide}
+\heading{0-RTT}
+
+\footnotesize{
+$$
+\xymatrix@C=3in@R=.3in{
+\ar[r]^{\txt{ClientHello + PreSharedKey/EarlyData extensions}} & \\
+\ar[r]^{\txt{\color{blue} 0-RTT data}} & \\
+& \ar[l]_{\txt{ServerHello, Finished}} \\
+& \ar[l]_{\txt{0.5-RTT Application Data}} \\
+\ar[r]^{\txt{Finished}} & \\
+\ar@{<->}[r]^{\txt{Application Data}} & \\
+}
+$$
+}
+\end{slide}
+
+\begin{slide}
+\heading{0-RTT Data Limitations}
+
+\begin{itemize}
+\item \emph{Replayability}
+  \begin{itemize}
+  \item Server can't be sure data isn't being replayed
+  \item Attacker can replay the early data
+    \begin{itemize}
+    \item There are server-side defenses, but they are somewhat painful
+    \end{itemize}
+  \item Many clients re-try (everything) on their own
+  \item Generally, clients and servers need to be careful here at the HTTP layer
+  \end{itemize}
+
+\item Not forward secure
+  \begin{itemize}
+    \item At least when used with session tickets
+    \item Can use a session cache
+      \begin{itemize}
+      \item But it's harder to build a distributed one
+      \end{itemize}
+    \end{itemize}
+
+\item No proof of liveness of client
+  \begin{itemize}
+  \item (Related to the 0-RTT issue above).
+  \end{itemize}
+\end{itemize}
+
+\end{slide}
+
+\begin{slide}
+\heading{0-RTT Uses}
+
+\vspace{-2ex}
+
+\begin{itemize}
+\item First set of HTTP requests
+\item DNS (query goes in 0-RTT, response goes in 0.5 RTT)
+\item Everything else!
+\end{itemize}
+
+\center{
+\includegraphics[width=2in]{1193600}
+}
+
+\end{slide}
+
+\centerslidestrue
+
+\begin{slide}
+\heading{Questions/Discussion?}
+
+\end{slide}
+
+\end{document}
