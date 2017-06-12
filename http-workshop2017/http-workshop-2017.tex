@@ -90,15 +90,14 @@ Mozilla\\
 \item Newest version of TLS -- gradually rolling out
   \begin{itemize}
   \item On by default in beta versions of Chrome, Firefox (and off by default in pre-release Safari)
+  \item NSS, BoringSSL, OpenSSL (some version diversity)
   \item Already on on Cloudflare, Gmail, etc.
   \item Some fighting with broken middleboxes
   \end{itemize}
 \item A bunch of security improvements
   \begin{itemize}
-  \item Improved metadata resistance
-  \item Encrypted certificates
-  \item Optional padding feature
-  \end{itemize}
+  \item Improved metadata resistance (encrypted certificates, optional padding feature, ...)
+\end{itemize}
 \item Performance improvements (this is what you care about)
   \begin{itemize}
   \item 0.5-RTT data (on server’s first flight)
@@ -197,7 +196,7 @@ $$
   \item Server can't be sure data isn't being replayed
   \item Attacker can replay the early data
     \begin{itemize}
-    \item There are server-side defenses, but they are somewhat painful
+    \item There are server-side defenses, but they are somewhat painful (sometimes nigh-impossible)
     \end{itemize}
   \item Many clients re-try (everything) on their own
   \item Generally, clients and servers need to be careful here at the HTTP layer

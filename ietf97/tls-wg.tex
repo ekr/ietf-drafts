@@ -251,13 +251,62 @@ Mozilla\\
   \item Would like to get rid of it
   \item Questions about interop (with passive inspection middleboxes)
   \end{itemize}
-\item Proposal in PR\#XXX
+\item Subtle point about 0-RTT failure transition
+  \begin{itemize}
+  \item Steal a bit from the header
+  \end{itemize}
+\item Proposal in PR\#762
   \begin{itemize}
   \item We will take compat measurements in the next month or two
   \item WG can then decide
   \end{itemize}
 \end{itemize}
 }
+\end{slide}
+
+\begin{slide}
+\heading{Longer key lifetimes}
+
+\vspace{-2ex}
+{\scriptsize
+\begin{verbatim}
+Regardless of the actual record size, each 128-bit block encryption is
+performed with a unique 128-bit counter which is formed by the 96-bit
+IV and the 32-bit counter_block value called CB in NIST SP 800-38D
+under a given key as long as the number of encrypted records is not
+more than 2^64.
+
+Assuming a user would like to limit the probability of a collision
+among 128-bit ciphertext-blocks under 1/2^32, the data limit of the
+ciphertext ( or plaintext) is 2^(96/2) (= 2^48) 128-bit blocks which
+is 2^64 bytes.
+
+Reading the 2nd paragraph of section 5.5, a user might feel that
+he/she needs to rekey a lot more quicker than he/she needs. Putting an
+unnecessarily low data limit of 2^24.5 full-size records (2^38.5
+bytes) also creates an incorrect negative impression (in my opinion)
+about GCM.
+
+I would like to request the working group to consider to revise the
+text.
+\end{verbatim}
+
+\begin{itemize}
+\item Anyone persuaded?
+\end{itemize}
+}
+
+\end{slide}
+
+
+\begin{slide}
+\heading{PR\#763: EC Point Validation}
+
+\begin{itemize}
+\item Requires point validation for remote key shares
+\item Specifies the procedure for NIST curves
+\end{itemize}
+
 \end{slide}
 
 
@@ -277,5 +326,3 @@ Feb 10 & Draft-20 (if needed) and pub request \\
 
 
 \end{document} 
-
-                
