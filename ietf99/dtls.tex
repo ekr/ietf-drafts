@@ -1,0 +1,224 @@
+\documentclass[helvetica]{seminar} 
+\input{xy}
+\xyoption{all}
+\usepackage{graphicx} 
+\usepackage{slidesec} 
+\usepackage{url}
+\usepackage[framemethod=TikZ]{mdframed}
+\usepackage{color}
+\usepackage[normalem]{ulem}  
+
+\def\dash---{\unskip\kern.16667em---\penalty\exhyphenpenalty\hskip.16667em\ignorespaces}
+\long\def\symbolfootnote[#1]#2{\begingroup%
+\def\thefootnote{\fnsymbol{footnote}}\footnote[#1]{#2}\endgroup}
+
+% to fix problems making landscape seminar pdfs
+% Letter...
+\pdfpagewidth=11truein
+\pdfpageheight=8.5truein
+\pdfhorigin=1truein     % default value(?), but doesn't work without
+\pdfvorigin=1truein     % default value(?), but doesn't work without
+% A4
+%\pdfpagewidth=297truemm % your milage may vary....
+%\pdfpageheight=210truemm
+%\pdfhorigin=1truein     % default value(?), but doesn't work without
+%\pdfvorigin=1truein     % default value(?), but doesn't work without
+
+
+\renewcommand{\familydefault}{\sfdefault}  
+ 
+\input{seminar.bug} 
+\input{seminar.bg2} % See the Seminar bugs list 
+ 
+\slideframe{none} 
+ 
+ 
+\usepackage{fancyhdr} 
+ 
+% Headers and footers personalization using the `fancyhdr' package 
+\fancyhf{} % Clear all fields 
+\renewcommand{\headrulewidth}{0mm} 
+\renewcommand{\footrulewidth}{0.1mm} 
+ 
+\fancyfoot[L]{\tiny IETF 99} 
+\fancyfoot[C]{\tiny TLS}
+\fancyfoot[R]{\tiny \theslide} 
+ 
+ 
+% To center horizontally the headers and footers (see seminar.bug) 
+\renewcommand{\headwidth}{\textwidth} 
+
+% To adjust the frame length to the header and footer ones 
+\autoslidemarginstrue 
+\pagestyle{fancy} 
+ 
+
+\newcommand{\heading}[1]{% 
+  \begin{center} 
+    \large\bf 
+    #1 
+  \end{center} 
+  \vspace{.4 in}} 
+
+
+
+\begin{document}
+
+\begin{slide}
+\begin{center}
+\vspace{.5 in}
+\LARGE{{\bf}DTLS 1.3\\{\small \verb^draft-ietf-tls-dtls13-01^}}\\
+\vspace{.2in}
+\large{
+\begin{tabular}{c c c}
+\textbf{Eric Rescorla} & Hannes Tschofenig & Nagendra Modadugu \\
+Mozilla & ARM & Google \\
+\end{tabular}
+}
+\end{center}
+\end{slide}
+
+\centerslidesfalse 
+
+\begin{slide}
+\heading{Reminder: ACKs}
+
+\begin{itemize}
+\item DTLS historically used an implicit ACK
+  \begin{itemize}
+  \item Receiving the start of the next flight means the flight was received
+  \end{itemize}
+
+\item Simple (but also simpleminded)
+  \begin{itemize}
+  \item Slightly tricky to implement
+  \item Gives limited congestion feedback
+  \item Handles single-packet loss badly
+  \end{itemize}
+
+\item Interacts badly with some TLS 1.3 features (like NST)
+\item Solution: introduce an explicit ACK
+\end{itemize}
+\end{slide}
+
+
+\begin{slide}
+  \heading{Current proposal: SACK}
+
+  \begin{itemize}
+  \item ACKs contain the sequence numbers of received records
+    \begin{itemize}
+    \item From the current flight only
+    \item Senders need to maintain a map from \emph{records} to \emph{handshake messages}
+    \item Senders SHOULD NOT retransmit ACKed data and MUST NOT retransmit ACKed flights
+    \end{itemize}
+  \item Separate record type, not a handshake record
+    \begin{itemize}
+    \item MUST be sent with epoch $>=$ than what's being ACKed
+    \item Sent with the current sending key
+    \end{itemize}
+  \item Receiving the next flight is an implicit ACK
+  \end{itemize}
+\end{slide}
+
+
+\begin{slide}
+  \heading{When should receivers ACK}
+
+  \begin{itemize}
+  \item When receiving messages that don't have in-handshake responses
+  \item When it looks like messages might have gotten lost
+    \begin{itemize}
+    \item When you get an out-of-order record
+    \item When you get a partial record and don't get the rest ``immediately''
+    \end{itemize}
+  \item Not for non-handshake messages
+  \end{itemize}
+
+\end{slide}
+
+
+\begin{slide}
+  \heading{Reduced Headers}
+
+  \begin{itemize}
+  \item What can we remove?
+    \begin{itemize}
+    \item Nonce
+    \item Content type and version (hopefully)
+    \end{itemize}
+
+  \item Proposal (thanks to MT):
+  \end{itemize}
+
+  {\footnotesize
+\begin{verbatim}
+    struct {
+      uint16 epoch_sequence // format = 001eesss ssssssss
+      uint16 length;
+      opaque encrypted_record[length];
+    } DtlsHeader;
+\end{verbatim}
+}
+
+\end{slide}
+
+
+\begin{slide}
+  \heading{Connection IDs}
+
+  \begin{itemize}
+  \item Lack of Connection IDs clearly a problem for NATs/IoT, etc.
+  \item Connection IDs are also a clear privacy problem
+    \begin{itemize}
+    \item Lots of proposals for how to do privacy preserving Conn IDs
+    \item ... but they're complicated and none of them seem totally baked
+    \item This seems like less of a privacy problem than with browsers (QUIC)     
+    \end{itemize}
+
+  \item Proposal: use a fixed connection ID for now
+    \begin{itemize}
+      \item In an extension
+      \item We can always replace it later
+    \end{itemize}
+  \end{itemize}
+\end{slide}
+
+
+\begin{slide}
+  \heading{Concrete proposal}
+  
+{\footnotesize
+\begin{verbatim}
+    struct {
+       opaque connection_id<0..255>;
+    } ConnectionId;
+
+    struct {
+      uint16 epoch_sequence // format = 001eesss ssssssss
+      opaque connection_id[connection_id_length];
+      uint16 length;
+      opaque encrypted_record[length];
+    } DtlsHeader;
+\end{verbatim}
+}
+
+\begin{itemize}
+\item IDs are used if client offers and server answers
+  \begin{itemize}
+    \item On all (non-0RTT)? encrypted records
+  \end{itemize}
+\item Each side \emph{sends} with the other's ID
+  \begin{itemize}
+    \item Because IDs are unframed, 0-length IDs are just omitted
+  \end{itemize}
+\end{itemize}
+\end{slide}
+
+\begin{slide}
+\heading{Other issues?}
+
+\end{slide}
+
+\end{document} 
+
