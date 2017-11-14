@@ -1,0 +1,179 @@
+\documentclass[helvetica]{seminar} 
+\input{xy}
+\xyoption{all}
+\usepackage{graphicx} 
+\usepackage{slidesec} 
+\usepackage{url}
+\usepackage[framemethod=TikZ]{mdframed}
+\usepackage{color}
+\usepackage[normalem]{ulem}  
+
+\def\dash---{\unskip\kern.16667em---\penalty\exhyphenpenalty\hskip.16667em\ignorespaces}
+\long\def\symbolfootnote[#1]#2{\begingroup%
+\def\thefootnote{\fnsymbol{footnote}}\footnote[#1]{#2}\endgroup}
+
+% to fix problems making landscape seminar pdfs
+% Letter...
+\pdfpagewidth=11truein
+\pdfpageheight=8.5truein
+\pdfhorigin=1truein     % default value(?), but doesn't work without
+\pdfvorigin=1truein     % default value(?), but doesn't work without
+% A4
+%\pdfpagewidth=297truemm % your milage may vary....
+%\pdfpageheight=210truemm
+%\pdfhorigin=1truein     % default value(?), but doesn't work without
+%\pdfvorigin=1truein     % default value(?), but doesn't work without
+
+
+\renewcommand{\familydefault}{\sfdefault}  
+ 
+\input{seminar.bug} 
+\input{seminar.bg2} % See the Seminar bugs list 
+ 
+\slideframe{none} 
+ 
+ 
+\usepackage{fancyhdr} 
+ 
+% Headers and footers personalization using the `fancyhdr' package 
+\fancyhf{} % Clear all fields 
+\renewcommand{\headrulewidth}{0mm} 
+\renewcommand{\footrulewidth}{0.1mm} 
+ 
+\fancyfoot[L]{\tiny IETF 100} 
+\fancyfoot[C]{\tiny TLS}
+\fancyfoot[R]{\tiny \theslide} 
+ 
+ 
+% To center horizontally the headers and footers (see seminar.bug) 
+\renewcommand{\headwidth}{\textwidth} 
+
+% To adjust the frame length to the header and footer ones 
+\autoslidemarginstrue 
+\pagestyle{fancy} 
+ 
+
+\newcommand{\heading}[1]{% 
+  \begin{center} 
+    \large\bf 
+    #1 
+  \end{center} 
+  \vspace{.4 in}} 
+
+
+
+\begin{document}
+
+\begin{slide}
+\begin{center}
+\vspace{.5 in}
+\LARGE{{\bf}TLS 1.3\\{\small \verb^draft-ietf-tls-tls13-21^}}\\
+\vspace{.2in}
+\large{
+\begin{tabular}{c}
+Eric Rescorla\\
+Mozilla\\
+\url{ekr@rtfm.com}
+\end{tabular}
+}
+\end{center}
+\end{slide}
+
+\centerslidesfalse 
+
+\begin{slide}
+  \heading{Agenda}
+
+  \begin{itemize}
+  \item Middlebox issues (PR\#1091)
+  \item \verb^close_notify^ and half-close (PR\#1092)
+  \item SNI and resumption(PR\#180)
+  \end{itemize}
+\end{slide}
+
+
+\begin{slide}
+  \heading{Middlebox issues}
+
+  \begin{itemize}
+  \item Some middleboxes appear to be sad when you negotiate TLS 1.3
+  \item Error rates (Firefox Nightly versus Google)
+    \begin{itemize}
+    \item X\% for TLS 1.2
+    \item X\% for TLS 1.3
+    \end{itemize}
+  \item This means you need fallback to deploy TLS 1.3
+  \item Proposal: make TLS 1.3 look like TLS 1.2 resumption
+  \end{itemize}
+\end{slide}
+
+\begin{slide}
+  \heading{Emulate TLS 1.2 resumption part 1: Always}
+
+  \begin{itemize}
+  \item Move version negotiation entirely into \verb^supported_versions^
+    \begin{itemize}
+    \item ServerHello.version == 0x0303 (TLS 1.2)
+    \end{itemize}
+  \item Restore the missing \verb^session_id^ and compression fields in ServerHello
+  \item Change the post-ServerHello record layer version to 0x0303
+  \item Merge HRR and ServerHello into a single message with the semantics
+    distinguished by a special ServerHello.Random value.
+    \item Implementations MUST ignore ChangeCipherSpec during handshake
+  \end{itemize}
+\end{slide}
+
+\begin{slide}
+  \heading{Emulate TLS 1.2 resumption part 2: Compatibility Mode}
+
+  \begin{itemize}
+  \item The client sends a fake \verb^session_id^ and the server echoes it
+  \item The server sends ChangeCipherSpec messages after
+    ServerHello/HelloRetryRequest (so that the middlebox ignores any
+    "encrypted" data afterwards), and the client sends ChangeCipherSpec
+    after ClientHello.  (so that the middlebox ignores any "encrypted"
+    data afterwards), and the client sends ChangeCipherSpec after
+    ClientHello
+    \begin{itemize}
+    \item Server's ChangeCipherSpec SHOULD be sent when the client sends
+      the fake \verb^session_id^ (not in PR\#1091)
+    \end{itemize}
+  \end{itemize}
+\end{slide}
+
+
+\begin{slide}
+  \heading{Issues Raised}
+
+  \begin{itemize}
+  \item Should we \textsf{only} have compatibility mode?
+    \begin{itemize}
+    \item We don't need this for TLS 1.3/QUIC or DTLS
+    \item It's not \emph{entirely} clear we need the client-side CCS
+    \item At some point we may be able to stop sending server-side CCS
+    \end{itemize}
+
+  \item Should we require the client to enforce CCS cardinality?
+    \begin{itemize}
+    \item Require CCS be present
+    \item Require CCS to appear only once
+    \item This complicates the implementation of the receiver
+    \end{itemize}
+  \end{itemize}
+\end{slide}
+
+
+\begin{slide}
+\heading{Interlude: Chrome from David Benjamin}
+
+\end{slide}
+
+\begin{slide}
+\heading{Preliminary Firefox Data}
+
+\end{slide}
+
+
+\end{document}
+
+
