@@ -1,0 +1,220 @@
+\documentclass[helvetica]{seminar} 
+\input{xy}
+\xyoption{all}
+\usepackage{graphicx} 
+\usepackage{slidesec} 
+\usepackage{url}
+\usepackage[framemethod=TikZ]{mdframed}
+\usepackage{color}
+\usepackage[normalem]{ulem}  
+
+\def\dash---{\unskip\kern.16667em---\penalty\exhyphenpenalty\hskip.16667em\ignorespaces}
+\long\def\symbolfootnote[#1]#2{\begingroup%
+\def\thefootnote{\fnsymbol{footnote}}\footnote[#1]{#2}\endgroup}
+
+% to fix problems making landscape seminar pdfs
+% Letter...
+\pdfpagewidth=11truein
+\pdfpageheight=8.5truein
+\pdfhorigin=1truein     % default value(?), but doesn't work without
+\pdfvorigin=1truein     % default value(?), but doesn't work without
+% A4
+%\pdfpagewidth=297truemm % your milage may vary....
+%\pdfpageheight=210truemm
+%\pdfhorigin=1truein     % default value(?), but doesn't work without
+%\pdfvorigin=1truein     % default value(?), but doesn't work without
+
+
+\renewcommand{\familydefault}{\sfdefault}  
+ 
+\input{seminar.bug} 
+\input{seminar.bg2} % See the Seminar bugs list 
+ 
+\slideframe{none} 
+ 
+ 
+\usepackage{fancyhdr} 
+ 
+% Headers and footers personalization using the `fancyhdr' package 
+\fancyhf{} % Clear all fields 
+\renewcommand{\headrulewidth}{0mm} 
+\renewcommand{\footrulewidth}{0.1mm} 
+ 
+\fancyfoot[L]{\tiny IETF 100} 
+\fancyfoot[C]{\tiny TLS}
+\fancyfoot[R]{\tiny \theslide} 
+ 
+ 
+% To center horizontally the headers and footers (see seminar.bug) 
+\renewcommand{\headwidth}{\textwidth} 
+
+% To adjust the frame length to the header and footer ones 
+\autoslidemarginstrue 
+\pagestyle{fancy} 
+ 
+
+\newcommand{\heading}[1]{% 
+  \begin{center} 
+    \large\bf 
+    #1 
+  \end{center} 
+  \vspace{.4 in}} 
+
+
+\begin{document}
+
+\begin{slide}
+\begin{center}
+\vspace{.5 in}
+\LARGE{{\bf}Connection ID\\{\small \verb^draft-rescorla-tls-connection-id-02^}}\\
+\vspace{.2in}
+{\small
+\begin{tabular}{c c}
+\textbf{Eric Rescorla} & Hannes Tschofenig \\
+Mozilla& Arm Limited \\ 
+  \url{ekr@rtfm.com} & \url{hannes.tschofenig@arm.com} \\
+  \\
+  Thomas Fossati & Tobias Gondrom \\
+  Nokia & Huawei \\
+  thomas.fossati@nokia.com & tobias.gondrom@gondrom.org \\
+  \end{tabular}
+
+}
+
+\end{center}
+\end{slide}
+
+\centerslidesfalse 
+
+\begin{slide}
+  \heading{Recap from last time}
+
+  \begin{itemize}
+  \item Lack of Connection IDs clearly a problem for NATs/IoT, etc.
+  \item Connection IDs are also a clear privacy problem
+    \begin{itemize}
+    \item Lots of proposals for how to do privacy preserving Conn IDs
+    \item ... but they're complicated and none of them seem totally baked
+    \item This seems like less of a privacy problem than with browsers (QUIC)     
+    \end{itemize}
+
+  \item Proposal: use a fixed connection ID for now
+    \begin{itemize}
+    \item In an extension
+    \item We can always replace it later
+    \end{itemize}
+    
+  \item This got pulled out of DTLS and into its own draft
+  \end{itemize}
+\end{slide}
+
+
+\begin{slide}
+  \heading{Basic idea}
+  
+\begin{itemize}
+\item IDs are used if client offers and server answers
+  \begin{itemize}
+    \item On all (non-0RTT)? encrypted records
+  \end{itemize}
+\item Each side \emph{sends} with the other's ID
+  \begin{itemize}
+    \item Because IDs are unframed, 0-length IDs are just omitted
+  \end{itemize}
+\end{itemize}
+\end{slide}
+
+\begin{slide}
+  \heading{DTLS 1.2}
+
+\begin{verbatim}
+  struct {
+     ContentType type;
+     ProtocolVersion version;
+     uint16 epoch;
+     uint48 sequence_number;
+     opaque cid[cid_length];               // New field
+     uint16 length;
+     select (CipherSpec.cipher_type) {
+        case block:  GenericBlockCipher;
+        case aead:   GenericAEADCipher;
+     } fragment;
+  } DTLSCiphertext;
+\end{verbatim}
+\end{slide}
+
+\begin{slide}
+  \heading{DTLS 1.3\symbolfootnote[1]{Not in the draft. Ugh.}}
+
+  \vspace{-5ex}
+  \small{
+\begin{verbatim}
+  struct {
+      ContentType opaque_type = 23; /* application_data */
+      uint32 epoch_and_sequence;
+      opaque cid[cid_length];               // New field
+      uint16 length;
+      opaque encrypted_record[length];
+  } DTLSCiphertext;
+
+  struct {
+    uint16 short_epoch_and_sequence;  // 001ESSSS SSSSSSSS
+    opaque encrypted_record[remainder_of_datagram];
+    opaque cid[cid_length];               // New field
+  } DTLSShortCiphertext;
+
+
+\end{verbatim}
+}
+\end{slide}
+
+
+\begin{slide}
+  \heading{Connection ID Update (TLS 1.3 only)}
+
+\begin{verbatim}
+   enum {
+       cid_immediate(0), cid_spare(1), (255)
+   } ConnectionIdUsage;
+
+   struct {
+       opaque cid<0..2^8-1>;
+       ConnectionIdUsage usage;
+   } NewConnectionId;
+\end{verbatim}
+
+  \begin{itemize}
+    \item \verb^cid_immediate^ means ``delete all your older conn ids''
+    \item \verb^cid_spare^ means ``add to the valid conn ids''
+    \item I am not sure this is ideal
+  \end{itemize}
+
+\end{slide}
+
+
+
+\begin{slide}
+  \heading{Open Issues}
+
+  \begin{itemize}
+  \item Do we need a way to tell if a CID is present
+    \begin{itemize}
+    \item to deal with servers which have both CID and non-CID connections
+    \end{itemize}
+  \item Do we need CID update for TLS 1.2 (how?)
+  \item The record sequence number allows cross-CID linkage
+    \begin{itemize}
+    \item Solution: adopt the technique we used for QUIC of predictable jumps
+    \end{itemize}
+  \end{itemize}
+\end{slide}
+
+
+\begin{slide}
+\heading{Other issues? WG adoption?}
+
+\end{slide}
+
+\end{document}
+
+

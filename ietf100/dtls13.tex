@@ -1,0 +1,212 @@
+\documentclass[helvetica]{seminar} 
+\input{xy}
+\xyoption{all}
+\usepackage{graphicx} 
+\usepackage{slidesec} 
+\usepackage{url}
+\usepackage[framemethod=TikZ]{mdframed}
+\usepackage{color}
+\usepackage[normalem]{ulem}  
+
+\def\dash---{\unskip\kern.16667em---\penalty\exhyphenpenalty\hskip.16667em\ignorespaces}
+\long\def\symbolfootnote[#1]#2{\begingroup%
+\def\thefootnote{\fnsymbol{footnote}}\footnote[#1]{#2}\endgroup}
+
+% to fix problems making landscape seminar pdfs
+% Letter...
+\pdfpagewidth=11truein
+\pdfpageheight=8.5truein
+\pdfhorigin=1truein     % default value(?), but doesn't work without
+\pdfvorigin=1truein     % default value(?), but doesn't work without
+% A4
+%\pdfpagewidth=297truemm % your milage may vary....
+%\pdfpageheight=210truemm
+%\pdfhorigin=1truein     % default value(?), but doesn't work without
+%\pdfvorigin=1truein     % default value(?), but doesn't work without
+
+
+\renewcommand{\familydefault}{\sfdefault}  
+ 
+\input{seminar.bug} 
+\input{seminar.bg2} % See the Seminar bugs list 
+ 
+\slideframe{none} 
+ 
+ 
+\usepackage{fancyhdr} 
+ 
+% Headers and footers personalization using the `fancyhdr' package 
+\fancyhf{} % Clear all fields 
+\renewcommand{\headrulewidth}{0mm} 
+\renewcommand{\footrulewidth}{0.1mm} 
+ 
+\fancyfoot[L]{\tiny IETF 100} 
+\fancyfoot[C]{\tiny TLS}
+\fancyfoot[R]{\tiny \theslide} 
+ 
+ 
+% To center horizontally the headers and footers (see seminar.bug) 
+\renewcommand{\headwidth}{\textwidth} 
+
+% To adjust the frame length to the header and footer ones 
+\autoslidemarginstrue 
+\pagestyle{fancy} 
+ 
+
+\newcommand{\heading}[1]{% 
+  \begin{center} 
+    \large\bf 
+    #1 
+  \end{center} 
+  \vspace{.4 in}} 
+
+
+\begin{document}
+
+\begin{slide}
+\begin{center}
+\vspace{.5 in}
+\LARGE{{\bf}DTLS 1.3\\{\small \verb^draft-ietf-tls-dtls13-02^}}\\
+\vspace{.2in}
+\small{
+\begin{tabular}{c c c}
+\textbf{Eric Rescorla} & Hannes Tschofenig & Nagendra Modadugu\\
+Mozilla& Arm Limited & Google \\ 
+\url{ekr@rtfm.com} & \url{hannes.tschofenig@arm.com} & \url{nagendra@cs.stanford.edu} \\
+\end{tabular}
+}
+\end{center}
+\end{slide}
+
+\centerslidesfalse 
+
+
+\begin{slide}
+  \heading{Changes since -01}
+
+  \begin{itemize}
+  \item Short record headers
+  \item Empty ACK and clarified ACK rules
+  \item Reintroduce KeyUpdate because it now works with ACKs
+  \end{itemize}
+
+\end{slide}
+
+\begin{slide}
+  \heading{Short headers 1: Shorten DTLSCiphertext}
+
+\begin{verbatim}
+  struct {
+      ContentType opaque_type = 23; /* application_data */
+      uint32 epoch_and_sequence;
+      uint16 length;
+      opaque encrypted_record[length];
+  } DTLSCiphertext;
+\end{verbatim}
+
+  \begin{itemize}
+  \item New format for DTLS encrypted traffic
+  \item Can be used like DTLS 1.2 DTLSCiphertext
+  \item Keyed on version negotiation as expected
+  \end{itemize}
+\end{slide}
+
+
+\begin{slide}
+\heading{Short headers 2: Special DTLSShortCiphertext}
+
+\begin{verbatim}
+    struct {
+      uint16 short_epoch_and_sequence;  // 001ESSSS SSSSSSSS
+      opaque encrypted_record[remainder_of_datagram];
+    } DTLSShortCiphertext;
+\end{verbatim}
+
+\begin{itemize}
+\item E == truncated epoch
+\item S == truncated sequence
+\item Can \emph{only} be used
+  \begin{itemize}
+  \item With 1-RTT data
+  \item When you have one record per packet
+  \end{itemize}
+\end{itemize}
+\end{slide}
+
+
+\begin{slide}
+  \heading{Reconstructing the epoch/sequence}
+
+\begin{verbatim}
+   Sequence reconstruction (same as QUIC):
+     Use full sequence number closest to seq of the
+     highest successfully deprotected record.
+ 
+   Epoch:
+     If epoch low-order bits match, just decrypt
+     If epoch low-order bits match, use the epoch
+     which provides the closest reconstructed
+     sequence number.
+\end{verbatim}
+\end{slide}
+
+
+\begin{slide}
+  \heading{Empty Acks}
+
+  \begin{itemize}
+  \item Sometimes you can't decrypt part of a flight
+    \begin{itemize}
+    \item E.g., you get EE before SH
+    \end{itemize}
+  \item In these cases you can't ACK
+    \begin{itemize}
+    \item And rely on the retransmit timeout
+    \end{itemize}
+  \item In this case you should send an empty ACK
+    \begin{itemize}
+    \item This shortcuts the retransmit
+    \end{itemize}
+  \end{itemize}
+\end{slide}
+
+
+\begin{slide}
+  \heading{KeyUpdate}
+
+  \begin{itemize}
+  \item Restored KeyUpdate mechanism
+    \begin{itemize}
+    \item Works just like TLS 1.3
+    \item With ACK, this works properly
+    \end{itemize}
+
+  \item When can you send with the new key?
+    \begin{itemize}
+    \item Currently right away
+      \begin{itemize}
+      \item What about reordering?
+      \item ... trial decryption or drop the packet        
+      \end{itemize}
+
+    \item Alternative: can't send until ACKed
+      \begin{itemize}
+      \item Different than with TLS 1.3
+      \item Arguably less complex (though complexity is on updater)
+      \end{itemize}
+    \end{itemize}
+  \end{itemize}
+
+\end{slide}
+
+
+\begin{slide}
+\heading{Remaining Open issues: None!}
+
+\begin{itemize}
+\item WGLC?
+\end{itemize}
+\end{slide}
+
+
+\end{document}
