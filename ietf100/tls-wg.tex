@@ -61,7 +61,6 @@
   \vspace{.4 in}} 
 
 
-
 \begin{document}
 
 \begin{slide}
@@ -87,7 +86,7 @@ Mozilla\\
   \begin{itemize}
   \item Middlebox issues (PR\#1091)
   \item \verb^close_notify^ and half-close (PR\#1092)
-  \item SNI and resumption(PR\#180)
+  \item SNI and resumption(PR\#1080)
   \end{itemize}
 \end{slide}
 
@@ -173,6 +172,204 @@ Mozilla\\
 
 \end{slide}
 
+
+\begin{slide}
+\heading{\texttt{close\_notify} and half-close (PR\#1092)}
+
+\begin{itemize}
+\item Right now \verb^close_notify^ is sorta full-close
+  \begin{itemize}
+  \item Receiver has to flush outstanding untransmitted data
+  \item And immediately send \verb^close_notify^
+  \end{itemize}
+
+\item Not ideal
+  \begin{itemize}
+  \item Lots of implementations don't do this
+  \item Data may already be in flight
+  \item Reasons people may want half-close
+  \item Not clear why it's there in the first place
+
+  \end{itemize}
+
+\item Proposal
+  \begin{itemize}
+  \item Allow implementations to keep sending after receiving \verb^close_notify^
+  \item Backward compatible with previous behavior
+  \end{itemize}
+\end{itemize}
+\end{slide}
+
+
+\begin{slide}
+  \heading{SNI and Resumption (PR\#1080)}
+
+  \begin{itemize}
+  \item RFC 6066 totally prohibits resuming with different SNIs
+  \item Implementations aren't good about following this
+  \item Proposal
+    \begin{itemize}
+    \item Client MUST only resume if SNI is in certificate
+    \item Client SHOULD only resume if the SNI is the same
+      \begin{itemize}
+      \item No reason to think it will work anyway
+      \end{itemize}
+    \item Leaves the door open for the server to say that you can resume with different SNI
+    \end{itemize}
+  \item Not entirely clear how to analyze this
+    \begin{itemize}
+    \item But it looks like we already have these problems with existing implementations and HTTP coalescence
+    \end{itemize}
+  \end{itemize}
+\end{slide}
+
+
+\centerslidestrue
+
+\begin{slide}
+\begin{center}
+\vspace{.5 in}
+\LARGE{{\bf}DTLS 1.3\\{\small \verb^draft-ietf-tls-dtls13-02^}}\\
+\vspace{.2in}
+\large{
+\begin{tabular}{c}
+Eric Rescorla\\
+Mozilla\\
+\url{ekr@rtfm.com}
+\end{tabular}
+}
+\end{center}
+\end{slide}
+
+\centerslidesfalse 
+
+
+\begin{slide}
+  \heading{Changes since -01}
+
+  \begin{itemize}
+  \item Short record headers
+  \item Empty ACK and clarified ACK rules
+  \item Reintroduce KeyUpdate because it now works with ACKs
+  \end{itemize}
+
+\end{slide}
+
+\begin{slide}
+  \heading{Short headers 1: Shorten DTLSCiphertext}
+
+\begin{verbatim}
+  struct {
+      ContentType opaque_type = 23; /* application_data */
+      uint32 epoch_and_sequence;
+      uint16 length;
+      opaque encrypted_record[length];
+  } DTLSCiphertext;
+\end{verbatim}
+
+  \begin{itemize}
+  \item New format for DTLS encrypted traffic
+  \item Can be used like DTLS 1.2 DTLSCiphertext
+  \item Keyed on version negotiation as expected
+  \end{itemize}
+\end{slide}
+
+
+\begin{slide}
+\heading{Short headers 2: Special DTLSShortCiphertext}
+
+\begin{verbatim}
+    struct {
+      uint16 short_epoch_and_sequence;  // 001ESSSS SSSSSSSS
+      opaque encrypted_record[remainder_of_datagram];
+    } DTLSShortCiphertext;
+\end{verbatim}
+
+\begin{itemize}
+\item E == truncated epoch
+\item S == truncated sequence
+\item Can \emph{only} be used
+  \begin{itemize}
+  \item With 1-RTT data
+  \item When you have one record per packet
+  \end{itemize}
+\end{itemize}
+\end{slide}
+
+
+\begin{slide}
+  \heading{Reconstructing the epoch/sequence}
+
+\begin{verbatim}
+   Sequence reconstruction (same as QUIC):
+     Use full sequence number closest to seq of the
+     highest successfully deprotected record.
+ 
+   Epoch:
+     If epoch low-order bits match, just decrypt
+     If epoch low-order bits match, use the epoch
+     which provides the closest reconstructed
+     sequence number.
+\end{verbatim}
+\end{slide}
+
+
+\begin{slide}
+  \heading{Empty Acks}
+
+  \begin{itemize}
+  \item Sometimes you can't decrypt part of a flight
+    \begin{itemize}
+    \item E.g., you get EE before SH
+    \end{itemize}
+  \item In these cases you can't ACK
+    \begin{itemize}
+    \item And rely on the retransmit timeout
+    \end{itemize}
+  \item In this case you should send an empty ACK
+    \begin{itemize}
+    \item This shortcuts the retransmit
+    \end{itemize}
+  \end{itemize}
+\end{slide}
+
+
+\begin{slide}
+  \heading{KeyUpdate}
+
+  \begin{itemize}
+  \item Restored KeyUpdate mechanism
+    \begin{itemize}
+    \item Works just like TLS 1.3
+    \item With ACK, this works properly
+    \end{itemize}
+
+  \item When can you send with the new key?
+    \begin{itemize}
+    \item Currently right away
+      \begin{itemize}
+      \item What about reordering?
+      \item ... trial decryption or drop the packet        
+      \end{itemize}
+
+    \item Alternative: can't send until ACKed
+      \begin{itemize}
+      \item Different than with TLS 1.3
+      \item Arguably less complex (though complexity is on updater)
+      \end{itemize}
+    \end{itemize}
+  \end{itemize}
+
+\end{slide}
+
+
+\begin{slide}
+\heading{Remaining Open issues: None!}
+
+\begin{itemize}
+\item WGLC?
+\end{itemize}
+\end{slide}
 
 \end{document}
 
