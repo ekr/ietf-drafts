@@ -130,8 +130,7 @@ Mozilla\\
   \item The server sends ChangeCipherSpec messages after
     ServerHello/HelloRetryRequest (so that the middlebox ignores any
     "encrypted" data afterwards), and the client sends ChangeCipherSpec
-    after ClientHello.  (so that the middlebox ignores any "encrypted"
-    data afterwards), and the client sends ChangeCipherSpec after
+    after ClientHello.
     ClientHello
     \begin{itemize}
     \item Server's ChangeCipherSpec SHOULD be sent when the client sends
@@ -148,7 +147,8 @@ Mozilla\\
   \item Should we \textsf{only} have compatibility mode?
     \begin{itemize}
     \item We don't need this for TLS 1.3/QUIC or DTLS
-    \item It's not \emph{entirely} clear we need the client-side CCS
+    \item It's not \emph{entirel
+        y} clear we need the client-side CCS
     \item At some point we may be able to stop sending server-side CCS
     \end{itemize}
 
@@ -163,18 +163,21 @@ Mozilla\\
 
 
 \begin{slide}
-\heading{Interlude: Chrome from David Benjamin}
+\heading{Interlude: Chrome Data from David Benjamin}
 
-\end{slide}
+\includegraphics[width=2.4in]{recount}
 
-\begin{slide}
-\heading{Preliminary Firefox Data}
+\vspace{1ex}
+
+Firefox data hopefully coming soon
 
 \end{slide}
 
 
 \begin{slide}
 \heading{\texttt{close\_notify} and half-close (PR\#1092)}
+
+\vspace{-3ex}
 
 \begin{itemize}
 \item Right now \verb^close_notify^ is sorta full-close

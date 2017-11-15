@@ -158,10 +158,9 @@ Mozilla& Arm Limited \\
 
   struct {
     uint16 short_epoch_and_sequence;  // 001ESSSS SSSSSSSS
-    opaque encrypted_record[remainder_of_datagram];
     opaque cid[cid_length];               // New field
+    opaque encrypted_record[remainder_of_datagram];
   } DTLSShortCiphertext;
-
 
 \end{verbatim}
 }
