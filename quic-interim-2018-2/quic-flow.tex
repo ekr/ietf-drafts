@@ -104,7 +104,7 @@ $$
   \txt{\textbf{Client}} & \txt{\textbf{Server}} \\
   \ar[r]^{\txt{\texttt{Initial[0]: CRYPTO\_HS[CH]}}} &\\
   \ar[r]^{\color{orange}\txt{\texttt{0-RTT[0]: STREAM[0, "..."]}}} &\\  
-  & \ar[l]_{\txt{\texttt{Initial[0]: CRYPTO\_HS[SH] ACK[0]}}}^{\color{blue}{\txt{\texttt{Handshake[1]: CRYPTO\_HS[EE, FIN]}}}} \\
+  & \ar[l]_{\txt{\texttt{Initial[0]: CRYPTO\_HS[SH] ACK[0]}}}^{\color{blue}{\txt{\texttt{Handshake[0]: CRYPTO\_HS[EE, FIN]}}}} \        \
   & \ar[l]_{\color{red}\txt{\texttt{1-RTT[0]: STREAM[0, "..."], ACK[0]}}} \\
   \ar[r]^{\txt{\texttt{Initial[1]: ACK[0]}}}_{\color{orange}{\txt\texttt{O-RTT[1]: CRYPTO\_HS[EOED]} }\color{black}{\txt{\texttt{     }}} \color{blue}{\txt{\texttt{Handshake[0]: CRYPTO\_HS[FIN], ACK[0]}}}} & \\
   \ar[r]^{\color{red}{\txt{\texttt{1-RTT[2]: STREAM[0, "..."], ACK[0]}}}} & \\
