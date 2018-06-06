@@ -1,0 +1,125 @@
+\documentclass[helvetica]{seminar} 
+\input{xy}
+\xyoption{all}
+\usepackage{graphicx} 
+\usepackage{slidesec} 
+\usepackage{url}
+\usepackage[framemethod=TikZ]{mdframed}
+\usepackage{color}
+\usepackage[normalem]{ulem}  
+
+\def\dash---{\unskip\kern.16667em---\penalty\exhyphenpenalty\hskip.16667em\ignorespaces}
+\long\def\symbolfootnote[#1]#2{\begingroup%
+\def\thefootnote{\fnsymbol{footnote}}\footnote[#1]{#2}\endgroup}
+
+% to fix problems making landscape seminar pdfs
+% Letter...
+\pdfpagewidth=11truein
+\pdfpageheight=8.5truein
+\pdfhorigin=1truein     % default value(?), but doesn't work without
+\pdfvorigin=1truein     % default value(?), but doesn't work without
+% A4
+%\pdfpagewidth=297truemm % your milage may vary....
+%\pdfpageheight=210truemm
+%\pdfhorigin=1truein     % default value(?), but doesn't work without
+%\pdfvorigin=1truein     % default value(?), but doesn't work without
+
+
+\renewcommand{\familydefault}{\sfdefault}  
+ 
+\input{seminar.bug} 
+\input{seminar.bg2} % See the Seminar bugs list 
+ 
+\slideframe{none} 
+ 
+ 
+\usepackage{fancyhdr} 
+ 
+% Headers and footers personalization using the `fancyhdr' package 
+\fancyhf{} % Clear all fields 
+\renewcommand{\headrulewidth}{0mm} 
+\renewcommand{\footrulewidth}{0.1mm} 
+ 
+\fancyfoot[L]{\tiny IETF 96} 
+\fancyfoot[C]{\tiny TLS}
+\fancyfoot[R]{\tiny \theslide} 
+ 
+ 
+% To center horizontally the headers and footers (see seminar.bug) 
+\renewcommand{\headwidth}{\textwidth} 
+
+% To adjust the frame length to the header and footer ones 
+\autoslidemarginstrue 
+\pagestyle{fancy} 
+ 
+
+\newcommand{\heading}[1]{% 
+  \begin{center} 
+    \large\bf 
+    #1 
+  \end{center} 
+  \vspace{.4 in}} 
+
+
+
+
+
+\begin{document}
+
+\begin{slide}
+\begin{center}
+\vspace{.5 in}
+\LARGE{{\bf}QUIC Handshake Flow}\\
+\vspace{.2in}
+\large{
+\begin{tabular}{c}
+Eric Rescorla\\
+Mozilla\\
+\url{ekr@rtfm.com}
+\end{tabular}
+}
+\end{center}
+\end{slide}
+
+\centerslidesfalse 
+
+\begin{slide}
+\heading{1-RTT Handshake}
+
+\vspace{-1in}
+
+$$
+\xymatrix@R=.35in@C=3in{
+  \txt{\textbf{Client}} & \txt{\textbf{Server}} \\
+  \ar[r]^{\txt{\texttt{Initial[1]: CRYPTO\_HS[CH]}}} &\\
+  & \ar[l]_{\txt{\texttt{Initial[1]: CRYPTO\_HS[SH] ACK[1]}}}^{\color{blue}{\txt{\texttt{Handshake[1]: CRYPTO\_HS[EE, CERT, CV, FIN]}}}} \\
+  & \ar[l]_{\color{red}\txt{\texttt{1-RTT[1]: STREAM[0, "..."]}}} \\
+  \ar[r]^{\txt{\texttt{Initial[2]: ACK[2]}}}_{\color{blue}{\txt{\texttt{Handshake[1]: CRYPTO\_HS[FIN]}}}} & \\
+  \ar[r]^{\color{red}{\txt{\texttt{1-RTT[1]: STREAM[0, "..."], ACK[1]}}}} & \\    
+}
+$$
+\end{slide}
+
+
+\begin{slide}
+\heading{W/ 0-RTT Handshake}
+
+\vspace{-1in}
+
+$$
+\xymatrix@R=.35in@C=3in{
+  \txt{\textbf{Client}} & \txt{\textbf{Server}} \\
+  \ar[r]^{\txt{\texttt{Initial[1]: CRYPTO\_HS[CH]}}} &\\
+  \ar[r]^{\color{orange}\txt{\texttt{0-RTT[1]: STREAM[0, "..."]}}} &\\  
+  & \ar[l]_{\txt{\texttt{Initial[1]: CRYPTO\_HS[SH] ACK[1]}}}^{\color{blue}{\txt{\texttt{Handshake[1]: CRYPTO\_HS[EE, CERT, CV, FIN]}}}} \\
+  & \ar[l]_{\color{red}\txt{\texttt{1-RTT[1]: STREAM[0, "..."], ACK[1]}}} \\
+  \ar[r]^{\txt{\texttt{Initial[2]: ACK[2]}}}_{\color{orange}{\txt\texttt{O-RTT[2]: CRYPTO\_HS[EOED]} } \color{blue}{\txt{\texttt{Handshake[1]: CRYPTO\_HS[FIN]}}}} & \\
+  \ar[r]^{\color{red}{\txt{\texttt{1-RTT[2]: STREAM[0, "..."], ACK[1]}}}} & \\    
+}
+$$
+
+\end{slide}
+
+
+
+\end{document} 
