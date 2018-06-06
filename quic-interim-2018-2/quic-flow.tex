@@ -40,10 +40,6 @@
 \renewcommand{\headrulewidth}{0mm} 
 \renewcommand{\footrulewidth}{0.1mm} 
  
-\fancyfoot[L]{\tiny IETF 96} 
-\fancyfoot[C]{\tiny TLS}
-\fancyfoot[R]{\tiny \theslide} 
- 
  
 % To center horizontally the headers and footers (see seminar.bug) 
 \renewcommand{\headwidth}{\textwidth} 
@@ -84,37 +80,35 @@ Mozilla\\
 \centerslidesfalse 
 
 \begin{slide}
-\heading{1-RTT Handshake}
-
-\vspace{-1in}
+\vspace{-1.5in}
 
 $$
 \xymatrix@R=.35in@C=3in{
   \txt{\textbf{Client}} & \txt{\textbf{Server}} \\
-  \ar[r]^{\txt{\texttt{Initial[1]: CRYPTO\_HS[CH]}}} &\\
-  & \ar[l]_{\txt{\texttt{Initial[1]: CRYPTO\_HS[SH] ACK[1]}}}^{\color{blue}{\txt{\texttt{Handshake[1]: CRYPTO\_HS[EE, CERT, CV, FIN]}}}} \\
-  & \ar[l]_{\color{red}\txt{\texttt{1-RTT[1]: STREAM[0, "..."]}}} \\
-  \ar[r]^{\txt{\texttt{Initial[2]: ACK[2]}}}_{\color{blue}{\txt{\texttt{Handshake[1]: CRYPTO\_HS[FIN]}}}} & \\
-  \ar[r]^{\color{red}{\txt{\texttt{1-RTT[1]: STREAM[0, "..."], ACK[1]}}}} & \\    
+  \ar[r]^{\txt{\texttt{Initial[0]: CRYPTO\_HS[CH]}}} &\\
+  & \ar[l]_{\txt{\texttt{Initial[0]: CRYPTO\_HS[SH] ACK[0]}}}^{\color{blue}{\txt{\texttt{Handshake[0]: CRYPTO\_HS[EE, CERT, CV, FIN]}}}} \\
+  & \ar[l]_{\color{red}\txt{\texttt{1-RTT[0]: STREAM[0, "..."]}}} \\
+  \ar[r]^{\txt{\texttt{Initial[1]: ACK[0]}}}_{\color{blue}{\txt{\texttt{Handshake[0]: CRYPTO\_HS[FIN], ACK[0]}}}} & \\
+  \ar[r]^{\color{red}{\txt{\texttt{1-RTT[0]: STREAM[0, "..."], ACK[0]}}}} & \\
+   & \ar[l]_{\color{red}\txt{\texttt{1-RTT[1]: STREAM[55, "..."], ACK[0]}}}^{\color{blue}{\txt\texttt{Handshake[1]: ACK[0]}}} \\
 }
 $$
 \end{slide}
 
 
 \begin{slide}
-\heading{W/ 0-RTT Handshake}
-
-\vspace{-1in}
+\vspace{-1.7in}
 
 $$
 \xymatrix@R=.35in@C=3in{
   \txt{\textbf{Client}} & \txt{\textbf{Server}} \\
-  \ar[r]^{\txt{\texttt{Initial[1]: CRYPTO\_HS[CH]}}} &\\
-  \ar[r]^{\color{orange}\txt{\texttt{0-RTT[1]: STREAM[0, "..."]}}} &\\  
-  & \ar[l]_{\txt{\texttt{Initial[1]: CRYPTO\_HS[SH] ACK[1]}}}^{\color{blue}{\txt{\texttt{Handshake[1]: CRYPTO\_HS[EE, CERT, CV, FIN]}}}} \\
-  & \ar[l]_{\color{red}\txt{\texttt{1-RTT[1]: STREAM[0, "..."], ACK[1]}}} \\
-  \ar[r]^{\txt{\texttt{Initial[2]: ACK[2]}}}_{\color{orange}{\txt\texttt{O-RTT[2]: CRYPTO\_HS[EOED]} } \color{blue}{\txt{\texttt{Handshake[1]: CRYPTO\_HS[FIN]}}}} & \\
-  \ar[r]^{\color{red}{\txt{\texttt{1-RTT[2]: STREAM[0, "..."], ACK[1]}}}} & \\    
+  \ar[r]^{\txt{\texttt{Initial[0]: CRYPTO\_HS[CH]}}} &\\
+  \ar[r]^{\color{orange}\txt{\texttt{0-RTT[0]: STREAM[0, "..."]}}} &\\  
+  & \ar[l]_{\txt{\texttt{Initial[0]: CRYPTO\_HS[SH] ACK[0]}}}^{\color{blue}{\txt{\texttt{Handshake[1]: CRYPTO\_HS[EE, FIN]}}}} \\
+  & \ar[l]_{\color{red}\txt{\texttt{1-RTT[0]: STREAM[0, "..."], ACK[0]}}} \\
+  \ar[r]^{\txt{\texttt{Initial[1]: ACK[0]}}}_{\color{orange}{\txt\texttt{O-RTT[1]: CRYPTO\_HS[EOED]} }\color{black}{\txt{\texttt{     }}} \color{blue}{\txt{\texttt{Handshake[0]: CRYPTO\_HS[FIN], ACK[0]}}}} & \\
+  \ar[r]^{\color{red}{\txt{\texttt{1-RTT[2]: STREAM[0, "..."], ACK[0]}}}} & \\
+  & \ar[l]_{\color{red}\txt{\texttt{1-RTT[1]: STREAM[55, "..."], ACK[2]}}}^{\color{blue}{\txt\texttt{Handshake[1]: ACK[0]}}} \\  
 }
 $$
 
