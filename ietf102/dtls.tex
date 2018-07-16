@@ -1,0 +1,218 @@
+\documentclass[helvetica]{seminar} 
+\input{xy}
+\xyoption{all}
+\usepackage{graphicx} 
+\usepackage{slidesec} 
+\usepackage{url}
+\usepackage[framemethod=TikZ]{mdframed}
+\usepackage{color}
+\usepackage[normalem]{ulem}  
+
+\def\dash---{\unskip\kern.16667em---\penalty\exhyphenpenalty\hskip.16667em\ignorespaces}
+\long\def\symbolfootnote[#1]#2{\begingroup%
+\def\thefootnote{\fnsymbol{footnote}}\footnote[#1]{#2}\endgroup}
+
+% to fix problems making landscape seminar pdfs
+% Letter...
+\pdfpagewidth=11truein
+\pdfpageheight=8.5truein
+\pdfhorigin=1truein     % default value(?), but doesn't work without
+\pdfvorigin=1truein     % default value(?), but doesn't work without
+% A4
+%\pdfpagewidth=297truemm % your milage may vary....
+%\pdfpageheight=210truemm
+%\pdfhorigin=1truein     % default value(?), but doesn't work without
+%\pdfvorigin=1truein     % default value(?), but doesn't work without
+
+
+\renewcommand{\familydefault}{\sfdefault}  
+ 
+\input{seminar.bug} 
+\input{seminar.bg2} % See the Seminar bugs list 
+ 
+\slideframe{none} 
+ 
+ 
+\usepackage{fancyhdr} 
+ 
+% Headers and footers personalization using the `fancyhdr' package 
+\fancyhf{} % Clear all fields 
+\renewcommand{\headrulewidth}{0mm} 
+\renewcommand{\footrulewidth}{0.1mm} 
+ 
+\fancyfoot[L]{\tiny IETF 101} 
+\fancyfoot[C]{\tiny TLS}
+\fancyfoot[R]{\tiny \theslide} 
+ 
+ 
+% To center horizontally the headers and footers (see seminar.bug) 
+\renewcommand{\headwidth}{\textwidth} 
+
+% To adjust the frame length to the header and footer ones 
+\autoslidemarginstrue 
+\pagestyle{fancy} 
+ 
+
+\newcommand{\heading}[1]{% 
+  \begin{center} 
+    \large\bf 
+    #1 
+  \end{center} 
+  \vspace{.4 in}} 
+
+
+\begin{document}
+
+\begin{slide}
+\begin{center}
+\vspace{.5 in}
+\LARGE{{\bf}Connection ID\\{\small \verb^draft-rescorla-tls-connection-id-02^}}\\
+\vspace{.2in}
+{\small
+\begin{tabular}{c c}
+\textbf{Eric Rescorla} & Hannes Tschofenig \\
+Mozilla& Arm Limited \\ 
+  \url{ekr@rtfm.com} & \url{hannes.tschofenig@arm.com} \\
+  \\
+  Thomas Fossati & Tobias Gondrom \\
+  Nokia & Huawei \\
+  thomas.fossati@nokia.com & tobias.gondrom@gondrom.org \\
+  \end{tabular}
+
+}
+
+\end{center}
+\end{slide}
+
+\centerslidesfalse 
+
+\begin{slide}
+  \heading{Reminder: IETF 101}
+
+  \begin{itemize}
+  \item Explicitly mark the presence of CID
+    \begin{itemize}
+    \item CID length is implicit
+    \end{itemize}
+  \item Split work into DTLS 1.2 and DTLS 1.3
+    \begin{itemize}
+    \item Conn-ID document becomes DTLS 1.2 only
+    \item Add conn ID to DTLS 1.3 main draft
+    \item Both use the ``connection\_id'' extension
+    \end{itemize}
+  \end{itemize}
+\end{slide}
+
+\begin{slide}
+  \heading{DTLS 1.2: CID ``present'' marking}
+
+  \begin{itemize}
+  \item Two options presented
+    \begin{itemize}
+    \item Bit in the length field
+    \item Shadow content type values
+    \end{itemize}
+
+  \item Concern about compat of length field $\rightarrow$ shadow content types
+  \item Spec defines four new types (alert, handshake, application, heartbeat)
+    \begin{itemize}
+    \item This does seem like a lot
+    \end{itemize}
+  \end{itemize}
+\end{slide}
+
+\begin{slide}
+  \heading{Alternate Design (Thomson)}
+
+  \begin{itemize}
+  \item Allocate one extra code point (``encrypted content type + CID'')
+    \begin{itemize}
+    \item This would use TLS 1.3-style content type encryption
+    \item + Free padding
+    \item So no need for more code points
+    \end{itemize}    
+  \end{itemize}
+\end{slide}
+
+\begin{slide}
+  \heading{Alternate Alternate Design}
+
+\begin{verbatim}
+   struct {
+        ContentType type = 25; // new type valie
+        ProtocolVersion version;
+        uint16 epoch;
+        uint48 sequence_number;
+        ContentType true_content_type;
+        opaque cid[cid_length];               // New field
+        uint16 length;
+        select (CipherSpec.cipher_type) {
+            case block:  GenericBlockCipher;
+            case aead:   GenericAEADCipher;
+        } fragment;
+   } DTLSCiphertext;
+\end{verbatim}  
+\end{slide}
+
+\begin{slide}
+  \heading{Other ideas?}
+\end{slide}
+
+\begin{slide}
+\heading{DTLS 1.3: Unified Packet Format}
+
+{\scriptsize
+\begin{verbatim}
+  0 1 2 3 4 5 6 7
+ +-+-+-+-+-+-+-+-+
+ |0|0|1|C|L|X|X|X|
+ +-+-+-+-+-+-+-+-+
+ |Ep.| 14 bit    |   Legend:
+ +-+-+           |
+ |Sequence Number|   Ep. - Epoch
+ +-+-+-+-+-+-+-+-+   C   - CID present
+ | Connection ID |   L   - Length present
+ | (if any,      |   X   - Reserved
+ /  length as    /
+ |  negotiated)  |
+ +-+-+-+-+-+-+-+-+
+ | 16 bit Length |
+ | (if present)  |
+ +-+-+-+-+-+-+-+-+
+\end{verbatim}
+}
+\end{slide}
+
+\begin{slide}
+\heading{Examples}
+
+\vspace{-.3in}
+{\scriptsize
+\begin{verbatim}
+   0 1 2 3 4 5 6 7        0 1 2 3 4 5 6 7
+  +-+-+-+-+-+-+-+-+     +-+-+-+-+-+-+-+-+
+  |0|0|1|C|L|X|X|X|     |0|0|1|0|0|X|X|X|
+  +-+-+-+-+-+-+-+-+     +-+-+-+-+-+-+-+-+
+  |E|E| 14 bit    |     |E|E| 14 bit    |
+  +-+-+           |     +-+-+           |
+  |Sequence Number|     |Sequence Number|
+  +-+-+-+-+-+-+-+-+     +-+-+-+-+-+-+-+-+
+  |               |     |               |
+  / Connection ID /     |   Encrypted   |
+  |               |     /   Record      /
+  +-+-+-+-+-+-+-+-+     |               |
+  |   16 bit      |     +-+-+-+-+-+-+-+-+
+  |   Length      |
+  +-+-+-+-+-+-+-+-+
+  |               |
+  |  Encrypted    |
+  /  Record       /
+  |               |
+  +-+-+-+-+-+-+-+-+
+\end{verbatim}
+  }
+\end{slide}
+
+\end{document}
+
+
