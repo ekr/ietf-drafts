@@ -1,0 +1,153 @@
+\documentclass[helvetica]{seminar} 
+\input{xy}
+\xyoption{all}
+\usepackage{graphicx} 
+\usepackage{slidesec} 
+\usepackage{url}
+\usepackage[framemethod=TikZ]{mdframed}
+\usepackage{color}
+\usepackage[normalem]{ulem}  
+
+\def\dash---{\unskip\kern.16667em---\penalty\exhyphenpenalty\hskip.16667em\ignorespaces}
+\long\def\symbolfootnote[#1]#2{\begingroup%
+\def\thefootnote{\fnsymbol{footnote}}\footnote[#1]{#2}\endgroup}
+
+% to fix problems making landscape seminar pdfs
+% Letter...
+\pdfpagewidth=11truein
+\pdfpageheight=8.5truein
+\pdfhorigin=1truein     % default value(?), but doesn't work without
+\pdfvorigin=1truein     % default value(?), but doesn't work without
+% A4
+%\pdfpagewidth=297truemm % your milage may vary....
+%\pdfpageheight=210truemm
+%\pdfhorigin=1truein     % default value(?), but doesn't work without
+%\pdfvorigin=1truein     % default value(?), but doesn't work without
+
+
+\renewcommand{\familydefault}{\sfdefault}  
+ 
+\input{seminar.bug} 
+\input{seminar.bg2} % See the Seminar bugs list 
+ 
+\slideframe{none} 
+ 
+ 
+\usepackage{fancyhdr} 
+ 
+% Headers and footers personalization using the `fancyhdr' package 
+\fancyhf{} % Clear all fields 
+\renewcommand{\headrulewidth}{0mm} 
+\renewcommand{\footrulewidth}{0.1mm} 
+ 
+\fancyfoot[L]{\tiny IETF 104} 
+\fancyfoot[C]{\tiny TLS}
+\fancyfoot[R]{\tiny \theslide} 
+ 
+ 
+% To center horizontally the headers and footers (see seminar.bug) 
+\renewcommand{\headwidth}{\textwidth} 
+
+% To adjust the frame length to the header and footer ones 
+\autoslidemarginstrue 
+\pagestyle{fancy} 
+ 
+
+\newcommand{\heading}[1]{% 
+  \begin{center} 
+    \large\bf 
+    #1 
+  \end{center} 
+  \vspace{.4 in}} 
+
+
+\begin{document}
+
+\begin{slide}
+\begin{center}
+\vspace{.5 in}
+\LARGE{{\bf}DTLS 1.3\\{\small \verb^draft-ietf-tls-dtls13-28^}}\\
+\vspace{.2in}
+{\small
+\begin{tabular}{c c}
+\textbf{Eric Rescorla} & Hannes Tschofenig \\
+Mozilla& Arm Limited \\ 
+  \url{ekr@rtfm.com} & \url{hannes.tschofenig@arm.com} \\
+  \\
+  Nagendra Modadugu \\
+  Google \\
+  nagendra@cs.stanford.edu \\
+  \end{tabular}
+
+}
+
+\end{center}
+\end{slide}
+
+\centerslidesfalse 
+
+\begin{slide}
+  \heading{-31 Draft}
+
+  \begin{itemize}
+  \item A lot of editorial improvements (thanks MT, others)
+  \item Update the example
+\end{itemize}
+\end{slide}
+
+\begin{slide}
+  \heading{Issue 78 -- amplification factor}
+
+  \begin{itemize}
+  \item QUIC goes to a lot of effort to avoid amplification from small ClientHellos
+  \item DTLS historically vague on this (HRR not required)
+  \item Definitely not an issue in some scenarios (w/ ICE)
+  \item Should we do somethng here?
+  \item Proposal: SHOULD-level requirement to do HRR in ``sensitive'' cases.
+  \end{itemize}
+\end{slide}
+
+\begin{slide}
+  \heading{Issue 76 -- non-empty cookies + cookie extension}
+
+  \begin{itemize}
+  \item There's no good reason for this
+  \item Proposal: Forbid this and require rejection
+  \end{itemize}
+\end{slide}
+
+
+\begin{slide}
+  \heading{Issue 72: Key Separation}
+
+  \begin{itemize}
+  \item Do we need key separation with TLS?
+  \item The transcript is different (headers)
+  \item Proposal: Do nothing
+  \end{itemize}
+\end{slide}
+
+\begin{slide}
+  \heading{Implementation Status}
+
+  \begin{itemize}
+  \item Implementations in NSS, Mint, mBed
+  \item Interop hopefully this week
+  \end{itemize}
+\end{slide}
+
+\begin{slide}
+\heading{Next Steps}
+
+\begin{itemize}
+\item Update the issues as discussed above
+\item New draft
+\item Get interop -- implementation report on the list
+\item Send to IESG
+\end{itemize}
+\end{slide}
+
+\end{document}
+
+
+        
