@@ -2028,28 +2028,13 @@ IdP Proxy -> PeerConnection:
               Fundamentally, the IdP proxy is just a piece of HTML and JS loaded
               by the browser, so nothing stops a Web attacker o from creating
               their own IFRAME, loading the IdP proxy HTML/JS, and requesting a
-              signature. In order to prevent this attack, we require that all
-              signatures be tied to a specific origin ("rtcweb://...") which
-              cannot be produced by content JavaScript. Thus, while an attacker
-              can instantiate the IdP proxy, they cannot send messages from an
-              appropriate origin and so cannot create acceptable
-              assertions. I.e., the assertion request must have come from the
-              browser. This origin check is enforced on the relying party side,
-              not on the authenticating party side. The reason for this is to
-              take the burden of knowing which origins are valid off of the IdP,
-              thus making this mechanism extensible to other applications
-              besides WebRTC. The IdP simply needs to gather the origin
-              information (from the posted message) and attach it to the
-              assertion.
-            </t>
-            <t>
-              Note that although this origin check is enforced on the RP side
-              and not at the IdP, it is absolutely imperative that it be
-              done. The mechanisms in this document rely on the browser
-              enforcing access restrictions on the DTLS keys and assertion
-              requests which do not come with the right origin may be from
-              content JS rather than from browsers, and therefore those access
-              restrictions cannot be assumed.
+              signature. In order to prevent this attack, the message channel is
+              inserted into the IdP context in a way that cannot be replicated
+              by content JavaScript. Thus, while an attacker can instantiate the
+              IdP proxy, they cannot insert the message channel port, and
+              therefore cannot request a valid assertion.  In other words, the
+              IdP can be certain that an assertion request has come from the
+              browser.
             </t>
             <t>
               Note that this check only asserts that the browser (or some other
