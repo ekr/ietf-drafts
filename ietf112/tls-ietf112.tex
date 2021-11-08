@@ -15,7 +15,7 @@
 \long\def\symbolfootnote[#1]#2{\begingroup%
 \def\thefootnote{\fnsymbol{footnote}}\footnote[#1]{#2}\endgroup}
 
-\title{DTLS 1.3}
+\title{RFC 8446-bis}
 \author{Eric Rescorla \\\url{ekr@rtfm.com}}
 \date{\today}
 
@@ -25,65 +25,8 @@
   \titlepage
 \end{frame}
 
-\begin{frame}{Current Status}
-
-  \begin{itemize}
-  \item In AUTH48
-  \item Two substantive issues raised
-  \end{itemize}
-\end{frame}
-
-\begin{frame}{Issue \href{https://github.com/tlswg/dtls13-spec/issues/249}{\#249}: Sequence numbers and epochs}
-
-  \begin{itemize}
-  \item DTLS has tighter record limits than TLS w/ AES-GCM
-    \begin{itemize}
-    \item See Appendix B      
-    \end{itemize}
-
-  \item The guidance is to rekey
-    \begin{itemize}
-    \item But epochs are only 16 bits
-    \item This means that the total number of records is $2^{40.5}$     
-    \end{itemize}
-
-  \item This is a prohibitively small number    
-  \end{itemize}
-\end{frame}
-
-\begin{frame}{Two designs}
-
-  \begin{itemize}
-  \item \href{https://github.com/tlswg/dtls13-spec/pull/255}{PR\#255}: 
-    Expands epoch to 64 bits but just encodes the lower 16 bits
-      \begin{itemize}
-      \item Expands ACK to 112 bits        
-      \item This is the more minimal change
-      \item Not clear that the epoch in the nonce helps; each epoch has separate keys
-      \end{itemize}
-
-    \item \href{https://github.com/tlswg/dtls13-spec/pull/257}{PR\#257}:
-        As with 255, but with 64-bit sequence numbers
-        \begin{itemize}
-        \item More consistent with TLS
-        \item We need to be confident that key separation is enough anyway
-        \item Allows more record number space for ciphers which can use it
-        \end{itemize}
-      \item Proposed resolution: PR\#257 after quick consultation
-    \end{itemize}
-\end{frame}                             
-
-
-\begin{frame}{Issue \href{https://github.com/tlswg/dtls13-spec/issues/247}{247}: handshake transcript}
-  
-  \begin{itemize}
-  \item DTLS \texttt{Handshake message} is different from TLS
-  \end{itemize}
-
-
-\end{frame}
-
-
+\bibliography{ppm}
+\bibliographystyle{alpha}
 
 \end{document}
 
