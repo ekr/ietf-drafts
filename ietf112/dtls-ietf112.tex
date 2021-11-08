@@ -28,13 +28,6 @@
 
 \begin{frame}{Current Status}
 
-  \verb^xx^
-
-\end{frame}
-
-
-\begin{frame}{Current Status}
-
   \begin{itemize}
   \item In AUTH48
   \item Two substantive issues raised
@@ -82,13 +75,31 @@
 \end{frame}                             
 
 
-\begin{frame}{Issue \href{https://github.com/tlswg/dtls13-spec/issues/247}{247}: handshake transcript}
+\begin{frame}[fragile]{Issue \href{https://github.com/tlswg/dtls13-spec/issues/247}{247}: handshake transcript}
+  
   
   \begin{itemize}
   \item DTLS \texttt{Handshake} is different from TLS
   \end{itemize}
 
+  \begin{verbatim}
+    struct {
+        HandshakeType msg_type;    /* handshake type */
+        uint24 length;             /* bytes in message */
+        uint16 message_seq;        /* DTLS-required field */
+        uint24 fragment_offset;    /* DTLS-required field */
+        uint24 fragment_length;    /* DTLS-required field */
+\end{verbatim}
 
+  \begin{itemize}
+  \item What do we do with \verb^message_hash^
+  \item TLS 1.3 and DTLS 1.3 transcripts are no longer clearly separable
+  \item Is it time to bite the bullet and make DTLS 1.3 like TLS 1.3?
+    \begin{itemize}
+    \item Pain for DTLS 1.2 impls
+    \end{itemize}
+  \end{itemize}
+  
 \end{frame}
 
 
