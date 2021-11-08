@@ -1,0 +1,34 @@
+\documentclass[helvetica]{beamer}
+\usetheme{Boadilla}
+\input{xy}
+\xyoption{all}
+\usepackage{graphicx} 
+\usepackage{slidesec} 
+\usepackage{url}
+\usepackage[framemethod=TikZ]{mdframed}
+\usepackage{tikz}
+\usetikzlibrary{calc,quotes,arrows.meta}
+\usepackage{color}
+\usepackage[normalem]{ulem}  
+\setbeamertemplate{itemize items}[circle]
+\def\dash---{\unskip\kern.16667em---\penalty\exhyphenpenalty\hskip.16667em\ignorespaces}
+\long\def\symbolfootnote[#1]#2{\begingroup%
+\def\thefootnote{\fnsymbol{footnote}}\footnote[#1]{#2}\endgroup}
+
+\title{RFC 8446-bis}
+\author{Eric Rescorla \\\url{ekr@rtfm.com}}
+\date{\today}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\bibliography{ppm}
+\bibliographystyle{alpha}
+
+\end{document}
+
+
+        
