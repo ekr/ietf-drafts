@@ -96,10 +96,10 @@ Mozilla\\
 
   \begin{itemize}
   \item Some middleboxes appear to be sad when you negotiate TLS 1.3
-  \item Error rates (Firefox Nightly versus Google)
+  \item Error rates (Firefox Beta versus Cloudflare)
     \begin{itemize}
-    \item X\% for TLS 1.2
-    \item X\% for TLS 1.3
+    \item 2.2\% for TLS 1.2
+    \item 3.9\% for TLS 1.3
     \end{itemize}
   \item This means you need fallback to deploy TLS 1.3
   \item Proposal: make TLS 1.3 look like TLS 1.2 resumption
@@ -147,8 +147,7 @@ Mozilla\\
   \item Should we \textsf{only} have compatibility mode?
     \begin{itemize}
     \item We don't need this for TLS 1.3/QUIC or DTLS
-    \item It's not \emph{entirel
-        y} clear we need the client-side CCS
+    \item It's not \emph{entirely} clear we need the client-side CCS
     \item At some point we may be able to stop sending server-side CCS
     \end{itemize}
 
@@ -171,6 +170,80 @@ Mozilla\\
 
 Firefox data hopefully coming soon
 
+\end{slide}
+
+
+\begin{slide}
+\heading{Chrome initial draft 18 deployment}
+
+\begin{itemize}
+\item No evidence of TLS 1.3 ClientHello intolerance. \verb^supported_versions^ and GREASE did their job.
+\item TLS 1.3 ServerHello was a very different story.
+
+\item Successful handshakes to a TLS-1.3-capable service in Chrome beta:
+  \begin{itemize}
+  \item TLS 1.2 - 98.3\%
+  \item Draft 18 - 92.3\%
+  \end{itemize}
+
+\item Middleboxes are intolerant to TLS 1.3 ServerHello. This violates TLS versioning rules: ClientHello is invariant, rest is version-specific.
+  
+\end{itemize}
+\end{slide}
+
+\begin{slide}
+\heading{Middleboxes}
+
+
+\begin{itemize}
+\item TLS-terminating middleboxes generally work fine with TLS 1.3.
+  \begin{itemize}
+  \item  "Just" a server and client connected back-to-back. Server half negotiates TLS 1.2, client half only offers what it implements.
+  \end{itemize}
+
+\item Other middleboxes process TLS without terminating it. They then try to parse unknown version-specific messages and break.
+  
+\item This is an oversimplified picture. A lot of middleboxes are a mix of the two strategies.
+  
+\end{itemize}
+
+\end{slide}
+
+
+\begin{slide}
+\heading{TLS 1.3 variants, round one}
+
+\vspace{-.5in}
+\begin{itemize}
+\item  "Experiment" $\rightarrow$ PR 1091 without the record-layer version change.
+\item  We tested what we could locally, then performed A/B tests in the wild (1-RTT).
+\item  Successful handshakes to a TLS-1.3-capable service in Chrome beta:
+  \begin{itemize}
+   \item  TLS 1.2    - 99.2\%
+   \item  Draft 18   - 95.8\%
+   \item  PR 1051    - 90.3\%
+   \item  Experiment - 98.2\%
+   \item  Experiment w/o client session ID - 95.4\%
+   \end{itemize}
+\item Lots of user reports confirmed problems with each variant, including some for Experiment.
+\end{itemize}
+\end{slide}
+
+
+\begin{slide}
+\heading{TLS 1.3 variants, round two}
+
+\begin{itemize}
+\item Reproduced Experiment problems and changed record version for round 2.
+\item Successful handshakes to a TLS-1.3-capable service in Chrome beta:
+  \begin{itemize}
+  \item TLS 1.2 - 98.6\%
+  \item PR 1091 - 98.8\%
+  \end{itemize}
+\item Corroborated by HTTP-level metrics.
+
+\item No user reports of problems thus far.
+\end{itemize}
 \end{slide}
 
 
