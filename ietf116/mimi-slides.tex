@@ -1,0 +1,38 @@
+\documentclass[helvetica]{beamer}
+\usetheme{Boadilla}
+\input{xy}
+\xyoption{all}
+\usepackage{graphicx} 
+\usepackage{slidesec} 
+\usepackage{url}
+\usepackage[framemethod=TikZ]{mdframed}
+\usepackage{tikz}
+\usetikzlibrary{calc,quotes,arrows.meta}
+\usepackage{color}
+\usepackage[normalem]{ulem}  
+\setbeamertemplate{itemize items}[circle]
+\def\dash---{\unskip\kern.16667em---\penalty\exhyphenpenalty\hskip.16667em\ignorespaces}
+\long\def\symbolfootnote[#1]#2{\begingroup%
+\def\thefootnote{\fnsymbol{footnote}}\footnote[#1]{#2}\endgroup}
+
+\title{MIMI Transport Requirements}
+\author{Eric Rescorla \\\url{ekr@rtfm.com}}
+\date{2022-11-10}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}{Overall Situation}
+
+  \vspace{.2in}
+\begin{center}
+  \includegraphics[width=4in]{messaging-architecture}
+\end{center}
+\end{frame}
+
+
+\end{document}
+
