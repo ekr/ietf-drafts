@@ -9,7 +9,8 @@
 \usepackage{tikz}
 \usetikzlibrary{calc,quotes,arrows.meta}
 \usepackage{color}
-\usepackage[normalem]{ulem}  
+\usepackage[normalem]{ulem}
+\usepackage{verbatim}
 \setbeamertemplate{itemize items}[circle]
 \def\dash---{\unskip\kern.16667em---\penalty\exhyphenpenalty\hskip.16667em\ignorespaces}
 \long\def\symbolfootnote[#1]#2{\begingroup%
@@ -25,7 +26,7 @@
   \titlepage
 \end{frame}
 
-\begin{frame}{Overall Situation}
+\begin{frame}{Abstract Architecture}
 
   \vspace{.2in}
 \begin{center}
@@ -34,5 +35,57 @@
 \end{frame}
 
 
+\begin{frame}{Protocol Breakdown}
+
+  \vspace{.2in}
+\begin{center}
+  \includegraphics[width=4in]{messaging-setting}
+\end{center}
+\end{frame}
+
+\begin{frame}{Question 1: How much are we defining?}
+
+  \begin{itemize}
+  \item A full system obviously needs a client to-server protocol
+    \begin{itemize}
+    \item Message protection and content need to be E2E
+    \item ... but message transport is not      
+    \end{itemize}
+  \item Most existing systems (XMPP, SIMPLE, etc. do it all)
+  \item Is client $\longleftrightarrow$ server in scope?
+  \end{itemize}  
+\end{frame}
+
+
+\begin{frame}{Naming and discovery}
+
+  \begin{itemize}
+  \item Two main kinds of existing identifiers
+    \begin{itemize}
+    \item \emph{System Specific (SSI).} e.g., ``\texttt{1.650.555.1000} on WhatsApp''
+      (or maybe \texttt{mimi:16505551000@whatsapp.com})
+    \item \emph{System Independent (SII):} e.g., \texttt{1.650.555.1000} or \texttt{ekr}
+    \end{itemize}
+  \item In general, an SII isn't enough to automatically contact someone
+    \begin{itemize}
+    \item You don't know what system they are on
+    \item The same SII may appear on multiple systems (e.g., phone numbers on WhatsApp + iMessage)
+    \end{itemize}
+  \item \emph{Discovery} is the process of determining which system(s) an SII appears on
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Question 2: Do we need to support discovery?}
+  
+  \begin{enumerate}
+    \item Only solve for SSIs
+    \item Solve for SSIs now and build discovery separately
+    \item Integrate discovery and consent (SPIN, draft-rosenberg)
+      \begin{itemize}
+      \item These designs assume that the SII is actually an SSI in some other system
+      \item What about systems that just use handles?
+      \end{itemize}
+  \end{enumerate}      
+\end{frame}
 \end{document}
 
