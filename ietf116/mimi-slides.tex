@@ -158,4 +158,80 @@
   \end{enumerate}
 \end{frame}
 
+
+\begin{frame}{Question: How much channel/room Management do we need?}
+
+  \begin{itemize}
+  \item XMPP (MUC) and Matrix have fairly complicated room management
+    \begin{itemize}
+    \item Ownership
+    \item Moderation
+    \item Kick/ban etc
+    \item Ask to join chats
+    \end{itemize}
+  \item A lot of systems don't
+  \item Is this stuff we need?
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}{Question: What's the basic data transfer model?}
+  \begin{itemize}
+  \item Message delivery
+    \begin{itemize}
+    \item Individual messages (SMTP)
+    \item Streaming (XMPP)
+    \item Open question: recovery from failure      
+    \end{itemize}
+  \item State synchronization
+    \begin{itemize}
+    \item Channel/room oriented (MTP, ActivityPub)
+    \item Overall state (Matrix?)
+    \item Open question: notification of new actions      
+    \end{itemize}
+  \item Also some questions around transport binding 9e.g., to HTTP)
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Question: room/channel portability?}
+
+  \begin{itemize}
+  \item General assumption seems to be a room/channel lives on one system
+    \begin{itemize}
+    \item Except for Matrix      
+    \end{itemize}
+    
+  \item Is it possible to move channels between owners?
+    \begin{itemize}
+    \item For instance, if the last member from the owner leaves
+    \item Linearized matrix allows this
+    \item XMPP, MTP, etc. don't seem to      
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Question: MLS-layer authentication for transport-layer transitions?}
+  \begin{itemize}
+  \item Suppose \texttt{alice@atlanta.com} and \texttt{bob@biloxi.com} are in a channel
+  \item Can \texttt{atlanta.com} add \texttt{adam@atlanta.com} to the channel at the transport layer?
+    \begin{itemize}
+    \item This still wouldn't work at the MLS layer
+    \item But the roster would be confused
+    \item And in some systems, this might eventually end up adding \texttt{adam@atlanta.com} to the channel
+    \end{itemize}
+    
+  \item Do all transitions need to be MLS-signed and \emph{verified} by each server
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Question: Privacy for metadata?}
+
+  \begin{itemize}
+  \item \texttt{draft-robert} talks about protecting the group roster
+  \item Is this necessary? Desirable? Undesirable?
+  \item What about concealing the identity of the sender and the recipient(s)?
+  \end{itemize}
+\end{frame}
+
+
 \end{document}
