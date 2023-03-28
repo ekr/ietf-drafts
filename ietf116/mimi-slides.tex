@@ -43,7 +43,7 @@
 \end{center}
 \end{frame}
 
-\begin{frame}{Question 1: How much are we defining?}
+\begin{frame}{Question: How much are we defining?}
 
   \begin{itemize}
   \item A full system obviously needs a client to-server protocol
@@ -75,7 +75,7 @@
   \end{itemize}
 \end{frame}
 
-\begin{frame}{Question 2: Do we need to support discovery?}
+\begin{frame}{Question: Do we need to support discovery?}
   
   \begin{enumerate}
     \item Only solve for SSIs
@@ -88,31 +88,42 @@
   \end{enumerate}      
 \end{frame}
 
-
-\begin{frame}{Consent}
+\begin{frame}{Consent?}
   \includegraphics[width=3in]{archer-spam}
   \begin{itemize}
-  \item No modern system allows Alice to just start messaging Bob
-  \item She needs to get consent first
-  \item Typically this consists of sending an \emph{invite}
+  \item Alice just send messages to Bob if she has his identifier
     \begin{itemize}
-    \item Bob has to accept before seeing Alice's messages      
+    \item This is a spam vector      
+    \end{itemize}
+  \item Or does she need to get consent first?
+    \begin{itemize}
+    \item Typically this consists of sending an \emph{invite}
+    \item ... Bob has to accept before seeing Alice's messages      
     \end{itemize}
   \end{itemize}
 \end{frame}
 
-\begin{frame}{Question 3: What can happen before consent?}
-  \begin{enumerate}
-  \item Alice can't do anything until Bob consents
-  \item Alice can get KeyPackages beforehand
+
+\begin{frame}{KeyPackage Availability}
+  \begin{itemize}
+  \item Sending encrypted messages requires the KeyPackage
+  \item This leaks whether the recipient exists
     \begin{itemize}
-    \item Do we have to worry about exhaustion?
-    \end{itemize}
+    \item Some ideas around fake KeyPackages but I don't think they work
+      \end{itemize}
+  \item Potential risk of KeyPackage exhaustion
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Question: which modes do we support?}
+  \begin{enumerate}
+  \item Alice can send messages to Bob immediately    
   \item Alice can send messages to Bob but they're quarantined until Bob accepts
     \begin{itemize}
     \item Potential concerns about excess data on Bob's side      
     \end{itemize}
-  \end{enumerate}
+  \item Alice can't do anything until Bob consents
+\end{enumerate}    
 \end{frame}
 
 
@@ -121,7 +132,7 @@
   \item (At least) three modalities
     \begin{itemize}
     \item 1-1 messages
-    \item Group messages
+        \item Group messages
     \item Channels/rooms
     \end{itemize}
     
@@ -133,7 +144,7 @@
   \end{itemize}
 \end{frame}
 
-\begin{frame}{Question 4: What models do we support?}
+\begin{frame}{Question: What models do we support?}
 
   \begin{enumerate}
   \item Everything's a group (this is what MLS thinks)
@@ -146,6 +157,5 @@
       \end{itemize}
   \end{enumerate}
 \end{frame}
-
 
 \end{document}
