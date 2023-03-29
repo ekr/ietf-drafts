@@ -46,7 +46,7 @@
 \begin{frame}{Question: How much are we defining?}
 
   \begin{itemize}
-  \item A full system obviously needs a client to-server protocol
+  \item A full system obviously needs a client-to-server protocol
     \begin{itemize}
     \item Message protection and content need to be E2E
     \item ... but message transport is not      
@@ -82,7 +82,7 @@
     \item Solve for SSIs now and build discovery separately
     \item Integrate discovery and consent (SPIN, draft-rosenberg)
       \begin{itemize}
-      \item These designs assume that the SII is actually an SSI in some other system
+      \item These designs assume that Alice has \emph{some} out of band channel to contact Bob
       \item What about systems that just use handles?
       \end{itemize}
   \end{enumerate}      
@@ -106,11 +106,8 @@
 
 \begin{frame}{KeyPackage Availability}
   \begin{itemize}
-  \item Sending encrypted messages requires the KeyPackage
+  \item Sending encrypted messages requires the KeyPackage\footnote{Recall: the KeyPackage contains the public key of the recipient.}
   \item This leaks whether the recipient exists
-    \begin{itemize}
-    \item Some ideas around fake KeyPackages but I don't think they work
-      \end{itemize}
   \item Potential risk of KeyPackage exhaustion
   \end{itemize}
 \end{frame}
@@ -132,14 +129,18 @@
   \item (At least) three modalities
     \begin{itemize}
     \item 1-1 messages
-        \item Group messages
+    \item Group messages with $>2$ people
     \item Channels/rooms
     \end{itemize}
     
   \item Some overlap between group messages and channels
+    \begin{itemize}
+    \item \textbf{Group} messages are defined by the members
+    \item Can't add new members (unlike channels!)      
+    \end{itemize}
   \item What about multiple group messages (or 1-1 messages) with the same membership?
     \begin{itemize}
-    \item This is handled inconsistently
+    \item This is handled inconsistently by existing messaging services
     \end{itemize}
   \end{itemize}
 \end{frame}
@@ -154,12 +155,16 @@
   \item Channels are fundamentally different (XMPP, Slack, etc.)
     \begin{itemize}
     \item And maybe we don't need group messages?
-      \end{itemize}
+    \item Or do channels first and then groups laer.      
+    \end{itemize}
   \end{enumerate}
+  \begin{itemize}
+  \item MLS can support any of these modes
+  \end{itemize}
 \end{frame}
 
 
-\begin{frame}{Question: How much channel/room Management do we need?}
+\begin{frame}{Channel/room Management}
 
   \begin{itemize}
   \item XMPP (MUC) and Matrix have fairly complicated room management
@@ -170,27 +175,9 @@
     \item Ask to join chats
     \end{itemize}
   \item A lot of systems don't
-  \item Is this stuff we need?
+  \item This is out of charter scope. Assumption is that this only works on the owning service.
   \end{itemize}
 
-\end{frame}
-
-\begin{frame}{Question: What's the basic data transfer model?}
-  \begin{itemize}
-  \item Message delivery
-    \begin{itemize}
-    \item Individual messages (SMTP)
-    \item Streaming (XMPP)
-    \item Open question: recovery from failure      
-    \end{itemize}
-  \item State synchronization
-    \begin{itemize}
-    \item Channel/room oriented (MTP, ActivityPub)
-    \item Overall state (Matrix?)
-    \item Open question: notification of new actions      
-    \end{itemize}
-  \item Also some questions around transport binding 9e.g., to HTTP)
-  \end{itemize}
 \end{frame}
 
 \begin{frame}{Question: room/channel portability?}
@@ -205,31 +192,69 @@
     \begin{itemize}
     \item For instance, if the last member from the owner leaves
     \item Linearized matrix allows this
-    \item XMPP, MTP, etc. don't seem to      
+    \item XMPP, MTP, etc. don't seem to allow this
     \end{itemize}
   \end{itemize}
 \end{frame}
 
-\begin{frame}{Question: MLS-layer authentication for transport-layer transitions?}
+\begin{frame}{MLS channel state versus transport channel state}
+
   \begin{itemize}
-  \item Suppose \texttt{alice@atlanta.com} and \texttt{bob@biloxi.com} are in a channel
-  \item Can \texttt{atlanta.com} add \texttt{adam@atlanta.com} to the channel at the transport layer?
+  \item State exists at both levels
     \begin{itemize}
-    \item This still wouldn't work at the MLS layer
-    \item But the roster would be confused
-    \item And in some systems, this might eventually end up adding \texttt{adam@atlanta.com} to the channel
+    \item Transport: which people are in the room?
+    \item MLS: which keys are in the room?
+    \end{itemize}
+  \item How tightly in sync are these?
+  \item And do they have to be cryptographically bound    
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Warmup: Bob gets a new phone}
+
+  \includegraphics[width=3.5in]{MIMI-new-phone}
+\end{frame}
+
+\begin{frame}{Charlie added to chat (1)}
+
+  \includegraphics[width=3.5in]{MIMI-new-user-1}
+\end{frame}
+
+\begin{frame}{Charlie added to chat (2)}
+
+  \includegraphics[width=3.5in]{MIMI-new-user-2}
+\end{frame}
+
+\begin{frame}{Question: Do we need MLS-level access control?}
+  \begin{itemize}
+  \item MLS just controls which keys are in the group
+    \begin{itemize}
+    \item But who decides which Commits are accepted by the group members?
+    \item For instance, can the owning provider add members 
+    \item Or do group members need to approve it?      
     \end{itemize}
     
-  \item Do all transitions need to be MLS-signed and \emph{verified} by each server
+  \item Some options
+    \begin{enumerate}
+    \item Do nothing
+    \item Specify MLS-level state change authentication
+    \item Require MLS-level state change authentication     
+    \end{enumerate}
   \end{itemize}
+  
 \end{frame}
 
 \begin{frame}{Question: Privacy for metadata?}
 
   \begin{itemize}
-  \item \texttt{draft-robert} talks about protecting the group roster
-  \item Is this necessary? Desirable? Undesirable?
-  \item What about concealing the identity of the sender and the recipient(s)?
+  \item MLS mostly protects the content of messages
+  \item But what about metadata?
+    \begin{itemize}
+    \item Who is messaging who      
+    \item Channel membership
+    \item Contact lists
+    \end{itemize}
+  \item Are we going to try to do anything here?    
   \end{itemize}
 \end{frame}
 
